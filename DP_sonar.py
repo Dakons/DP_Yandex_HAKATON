@@ -8,7 +8,7 @@ class Ultrasonic(object):
         """
         Инициализация ультразвукового датчика.
 
-        :param trig_pin: Номер GPIO пина для сигнала TRIG.
+        :param trig_pin: Номер GPIO пина для сигнаaла TRIG.
         :param echo_pin: Номер GPIO пина для сигнала ECHO.
         """
         self.trig_pin = trig_pin
@@ -52,14 +52,3 @@ class Ultrasonic(object):
         else:
             return -1  # Если превышает 5 метров, возвращаем -1
 
-# Пример использования:
-if __name__ == "__main__":
-    # Замените 17 и 27 на номера пинов вашего датчика
-    ultrasonic_sensor = Ultrasonic(trig_pin=17, echo_pin=27)  
-    while True:
-        distance = ultrasonic_sensor.get_distance()  # Получаем расстояние
-        if distance != -1:
-            print(f"Расстояние: {distance} см")  # Выводим расстояние
-        else:
-            print("Ошибка получения расстояния.")  # Сообщение об ошибке
-        time.sleep(1)  # Задержка между измерениями
