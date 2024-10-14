@@ -1,15 +1,11 @@
 from builtins import hex, eval, int, object  # Стандартные функции для работы с числами и объектами
-from xr_i2c import I2c  # Импорт класса для работы с I2C протоколом
+from DP_i2c import I2c  # Импорт класса для работы с I2C протоколом
 import os  # Модуль для работы с операционной системой
 
+ANGLE_MAX = 160
+ANGLE_MIN = 15
+
 i2c = I2c()  # Инициализация объекта I2C для управления устройствами
-import xr_config as cfg  # Конфигурационный файл с параметрами
-from xr_configparser import HandleConfig  # Импорт обработчика конфигурационных файлов
-
-# Путь к файлу конфигурации данных
-path_data = os.path.dirname(os.path.realpath(__file__)) + '/data.ini'
-cfgparser = HandleConfig(path_data)  # Инициализация конфигурационного парсера
-
 
 class Servo(object):
     """
@@ -25,10 +21,10 @@ class Servo(object):
         :return: корректированный угол в пределах допустимых значений
         """
         # Проверка и корректировка угла, если он выходит за допустимые пределы
-        if angle > cfg.ANGLE_MAX:  # Если угол превышает максимальный предел
-            angle = cfg.ANGLE_MAX
-        elif angle < cfg.ANGLE_MIN:  # Если угол меньше минимального предела
-            angle = cfg.ANGLE_MIN
+        if angle > ANGLE_MAX:  # Если угол превышает максимальный предел
+            angle = ANGLE_MAX
+        elif angle < ANGLE_MIN:  # Если угол меньше минимального предела
+            angle = ANGLE_MIN
         return angle  # Возвращаем скорректированное значение угла
 
     def set(self, servonum, servoangle):
@@ -48,23 +44,3 @@ class Servo(object):
             # Обработка ошибок в случае неудачной отправки данных
             print('Ошибка записи в сервопривод:', e)
 
-    def store(self):
-        """
-        Сохранение текущих углов сервоприводов в файл конфигурации
-        :return: ничего не возвращает
-        """
-        # Сохраняем текущие значения углов сервоприводов в секции "servo" файла данных
-        cfgparser.save_data("servo", "angle", cfg.ANGLE)
-
-    def restore(self):
-        """
-        Восстановление углов сервоприводов из файла конфигурации
-        :return: ничего не возвращает
-        """
-        # Получаем сохранённые значения углов сервоприводов из файла данных
-        cfg.ANGLE = cfgparser.get_data("servo", "angle")
-        # Восстанавливаем углы для каждого из сервоприводов
-        for i in range(0, 8):  # Предполагается, что имеется 8 сервоприводов
-            cfg.SERVO_NUM = i + 1  # Номер текущего сервопривода
-            cfg.SERVO_ANGLE = cfg.ANGLE[i]  # Восстановленный угол для этого сервопривода
-            self.set(i + 1, cfg.ANGLE[i])  # Устанавливаем угол для каждого сервопривода
