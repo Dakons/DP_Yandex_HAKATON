@@ -28,6 +28,8 @@ echo_pin = 24  # Задаём пин для ECHO (например, GPIO 24)
 # Основной цикл для получения и вывода расстояния
 while True:
     distance = Ultrasonic.get_distance()  # Получаем расстояние
-    distance_filtered = Filter_sonar(distance)
+    distance_filtered = Filter_sonar.filter(distance)
+    SonarData("Первичные данные", distance)
+    SonarData("Первичные данные", distance_filtered)
     time.sleep(0.01)  # Задержка между измерениями (1 секунда)
 
