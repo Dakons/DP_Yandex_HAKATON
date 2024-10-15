@@ -30,6 +30,6 @@ while True:
     distance = Ultrasonic.get_distance()  # Получаем расстояние
     distance_filtered = Filter_sonar.filter(distance)
     SonarData.send_telemetry("Первичные данные", distance)
-    SonarData.send_telemetry("Первичные данные", distance_filtered)
+    SonarData.send_telemetry("Фильтрованные данные", distance_filtered)
     time.sleep(0.01)  # Задержка между измерениями (1 секунда)
 
