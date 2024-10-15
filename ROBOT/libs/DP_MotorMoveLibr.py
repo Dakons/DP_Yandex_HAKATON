@@ -1,9 +1,11 @@
 import sys
 import os
-
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Добавляем libs в sys.path
+sys.path.append(parent_dir)
 
 #import RPi.GPIO as GPIO
-import DP_GPIO as gpio
+import libs.DP_GPIO as gpio
 
 
 def MotorMove(M1SPEED, M2SPEED):

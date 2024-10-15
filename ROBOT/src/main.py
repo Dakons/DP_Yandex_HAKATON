@@ -29,15 +29,15 @@ def constrain(value, min_value, max_value):
     return max(min(value, max_value), min_value)
 
 
-VectorRegulator = PIDRegulator()
+VectorRegulator = PIDRegulator(Kp=1, Ki=0, Kd=0)
 
 Last_time = time.time()
 while True:
     distance = Ultrasonic.get_distance()  # Получаем расстояние
     distance_filtered = round(Filter_sonar.filter(distance))
-    VectorRegulator.PIDRegulator(Kp=1, Ki=0, Kd=0)
+    #VectorRegulator.PIDRegulator(Kp=1, Ki=0, Kd=0)
     
-    Vector = VectorRegulator.regulate(distance_filtered, 50.0)
+    Vector = VectorRegulator.regulate(distance_filtered, 75.0)
     
     Left_Speed = BAZASPEED + Vector
     Right_Speed = BAZASPEED - Vector
@@ -47,6 +47,12 @@ while True:
 
     Motor.MotorMove(Left_Speed, Right_Speed)
     MoveData.send_telemetry("Distantion", distance_filtered)
+    MoveData.send_telemetry("P", VectorRegulator.P())
+    MoveData.send_telemetry("I", VectorRegulator.I())
+    MoveData.send_telemetry("D", VectorRegulator.D())
+    MoveData.send_telemetry("Error", VectorRegulator.regulate_error())
+    MoveData.send_telemetry("Vector", Vector)
+
     Now_time = time.time()
     if (Now_time - Last_time) > 10:
         break
