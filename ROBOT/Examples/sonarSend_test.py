@@ -30,4 +30,4 @@ while True:
     else:
         print("Ошибка измерения или превышение расстояния.")
         SonarData.send_telemetry("Dirty",distance)
-    time.sleep(1)  # Задержка между измерениями (1 секунда)
+    time.sleep(0.05)  # Задержка между измерениями (1 секунда)
