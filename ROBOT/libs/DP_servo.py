@@ -1,6 +1,18 @@
+import sys
+import os
+
+# Получаем путь к директории ROBOT
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Добавляем libs в sys.path
+sys.path.append(parent_dir)
+
+
 from builtins import hex, eval, int, object  # Стандартные функции для работы с числами и объектами
-from DP_i2c import I2c  # Импорт класса для работы с I2C протоколом
+from libs.DP_i2c import I2c  # Импорт класса для работы с I2C протоколом
 import os  # Модуль для работы с операционной системой
+
+ANGLE_MAX = 160
+ANGLE_MIN = 15
 
 i2c = I2c()  # Инициализация объекта I2C для управления устройствами
 

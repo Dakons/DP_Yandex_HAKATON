@@ -1,5 +1,8 @@
 class PIDRegulator:
     def __init__(self, Kp: float, Ki: float, Kd: float, output_min: float = -100.0, output_max: float = 100.0):
+        self.P = 0.0
+        self.I = 0.0
+        self.D = 0.0
         self.Kp = Kp
         self.Ki = Ki
         self.Kd = Kd
@@ -12,19 +15,20 @@ class PIDRegulator:
     def regulate(self, data: float, state: float) -> float:
         # Вычисляем текущую ошибку
         self.regulate_error = state - data
-        
+        if self.regulate_error < 5 and self.regulate_error > -5:
+            self.regulate_error = 0
         # Пропорциональная составляющая
-        P = self.Kp * self.regulate_error
-        
+        self.P = self.Kp * self.regulate_error
+    
         # Интегральная составляющая
-        self.integral += self.Ki * self.regulate_error
+        self.I += self.Ki * self.regulate_error
         
         # Дифференциальная составляющая
-        D = self.Kd * (self.regulate_error - self.last_error)
+        self.D = self.Kd * (self.regulate_error - self.last_error)
         self.last_error = self.regulate_error  # Обновляем последнюю ошибку
         
         # PID-выход
-        PID_output = P + self.integral + D
+        PID_output = self.P + self.I + self.D
         
         # Линейная интерполяция для ограничения выходного сигнала
         PID_output = self.linear_interpolate(PID_output)
@@ -39,3 +43,9 @@ class PIDRegulator:
             return self.output_max
         else:
             return value
+
+
+
+#нужно реализовать волновое воздействие
+
+#
