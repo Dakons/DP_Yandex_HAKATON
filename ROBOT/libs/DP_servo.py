@@ -2,9 +2,6 @@ from builtins import hex, eval, int, object  # Стандартные функц
 from DP_i2c import I2c  # Импорт класса для работы с I2C протоколом
 import os  # Модуль для работы с операционной системой
 
-ANGLE_MAX = 160
-ANGLE_MIN = 15
-
 i2c = I2c()  # Инициализация объекта I2C для управления устройствами
 
 class Servo(object):

@@ -5,8 +5,6 @@ serv_1 = Servo(180, 10, 1)
 serv_2 = Servo(120, 20, 2)
 serv_3 = Servo(45, 0, 3)
 serv_4 = Servo(90, 45, 4)
-serv_5 = Servo(160, 10, 5)
-serv_6 = Servo(160, 10, 6)
 serv_7 = Servo(180, 0, 7)
 serv_8 = Servo(160, 10, 8)
 
