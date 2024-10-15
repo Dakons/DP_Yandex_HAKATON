@@ -1,5 +1,5 @@
 import time
-from DP_sonar import Ultrasonic  # Импорт класса Ultrasonic из библиотеки
+from libs.DP_sonar import Ultrasonic  # Импорт класса Ultrasonic из библиотеки
 
 # Инициализация ультразвукового датчика
 trig_pin = 23  # Задаём пин для TRIG (например, GPIO 23)
