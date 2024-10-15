@@ -1,54 +1,42 @@
+import sys
+import os
 
+# Получаем путь к директории ROBOT
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Добавляем libs в sys.path
+sys.path.append(parent_dir)
 
 import time
-import DP_GPIO as gpio  # Импортируем модуль для работы с GPIO
+import libs.DP_GPIO as gpio  # Импортируем вашу библиотеку
 
-class Ultrasonic(object):
-    def __init__(self, trig_pin, echo_pin):
-        """
-        Инициализация ультразвукового датчика.
+# Пины ультразвукового датчика для измерения расстояния
+ECHO = 4    # Пин для получения сигнала от датчика (эхо-сигнал)
+TRIG = 17   # Пин для отправки сигнала триггера (активация датчика)
 
-        :param trig_pin: Номер GPIO пина для сигнаaла TRIG.
-        :param echo_pin: Номер GPIO пина для сигнала ECHO.
-        """
-        self.trig_pin = trig_pin
-        self.echo_pin = echo_pin
-        
-        gpio.setup(self.trig_pin, gpio.OUTPUT)  # Настраиваем TRIG как выход
-        gpio.setup(self.echo_pin, gpio.INPUT)  # Настраиваем ECHO как вход
+# Инициализация пинов ультразвукового датчика
+gpio.digital_write(TRIG, 0)  # Устанавливаем TRIG в низкий уровень (LOW)
 
-    def get_distance(self):
-        """
-        Функция для получения расстояния с помощью ультразвукового датчика.
-        Возвращает расстояние в сантиметрах.
-        """
-        time_count = 0
-        time.sleep(0.01)  # Задержка для стабилизации
+def get_distance():
+    # Функция для получения расстояния в сантиметрах
+    gpio.digital_write(TRIG, 1)  # Устанавливаем TRIG в высокий уровень
+    time.sleep(0.00001)  # Удерживаем HIGH в течение 10 мкс
+    gpio.digital_write(TRIG, 0)  # Устанавливаем TRIG в низкий уровень
 
-        # Отправляем ультразвуковой сигнал
-        gpio.digital_write(self.trig_pin, True)  # Устанавливаем высокий уровень на TRIG
-        time.sleep(0.000015)  # Длительность сигнала
-        gpio.digital_write(self.trig_pin, False)  # Устанавливаем низкий уровень на TRIG
-        
-        # Ждем, пока ECHO не станет высоким
-        while not gpio.digital_read(self.echo_pin):  
-            pass
-        t1 = time.time()  # Запоминаем время начала
+    start_time = time.time()  # Время начала
+    stop_time = time.time()  # Время остановки
 
-        # Ждем, пока ECHO не станет низким
-        while gpio.digital_read(self.echo_pin):  
-            if time_count < 2000:  # Тайм-аут для предотвращения бесконечного цикла
-                time_count += 1
-                time.sleep(0.000001)  # Маленькая задержка
-            else:
-                print("Нет сигнала ECHO! Пожалуйста, проверьте соединение.")
-                return -1  # Возвращаем -1 в случае ошибки
-        t2 = time.time()  # Запоминаем время окончания
+    # Ждем, пока ECHO не станет высоким
+    while gpio.digital_read(ECHO) == 0:
+        start_time = time.time()
 
-        # Вычисляем расстояние: время * скорость звука / 2
-        distance = (t2 - t1) * 340 / 2 * 100  # Приводим к сантиметрам
-        if distance < 500:  # Проверяем, что расстояние в пределах 5 метров
-            return round(distance, 2)  # Округляем до двух знаков
-        else:
-            return -1  # Если превышает 5 метров, возвращаем -1
+    # Ждем, пока ECHO не станет низким
+    while gpio.digital_read(ECHO) == 1:
+        stop_time = time.time()
+
+    # Вычисляем расстояние в сантиметрах
+    elapsed_time = stop_time - start_time
+    distance = (elapsed_time * 34300) / 2  # Скорость звука ~34300 см/с
+
+    return distance
+
 

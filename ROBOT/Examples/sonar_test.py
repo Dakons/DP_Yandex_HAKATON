@@ -7,16 +7,21 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 
 import time
-from libs.DP_sonar import Ultrasonic # Импорт класса Ultrasonic из библиотеки
+import libs.DP_sonar as Ultrasonic # Импорт класса Ultrasonic из библиотеки
 
+from libs.DP_servo import Servo
+
+sonServo = Servo()
+
+sonServo.set(7, 0)
 # Инициализация ультразвукового датчика
 trig_pin = 23  # Задаём пин для TRIG (например, GPIO 23)
 echo_pin = 24  # Задаём пин для ECHO (например, GPIO 24)
-ultrasonic_sensor = Ultrasonic(trig_pin, echo_pin)  # Создаём объект датчика
+
 
 # Основной цикл для получения и вывода расстояния
 while True:
-    distance = ultrasonic_sensor.get_distance()  # Получаем расстояние
+    distance = Ultrasonic.get_distance()  # Получаем расстояние
     if distance != -1:
         print(f"Расстояние: {distance} см")  # Выводим результат
     else:
