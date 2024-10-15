@@ -11,9 +11,10 @@ class Servo(object):
     """
     Класс для управления сервоприводом
     """
-    def __init__(self):
-        pass  # Конструктор, который ничего не делает на данном этапе
-
+    def __init__(self, ANGLE_MAX, ANGLE_MIN, servonum):
+        self.ANGLE_MAX = ANGLE_MAX
+        self.ANGLE_MIN = ANGLE_MIN
+        self.servonum = servonum
     def angle_limit(self, angle):
         """
         Ограничение угла сервопривода, чтобы предотвратить его блокировку или повреждение
@@ -21,13 +22,13 @@ class Servo(object):
         :return: корректированный угол в пределах допустимых значений
         """
         # Проверка и корректировка угла, если он выходит за допустимые пределы
-        if angle > ANGLE_MAX:  # Если угол превышает максимальный предел
-            angle = ANGLE_MAX
-        elif angle < ANGLE_MIN:  # Если угол меньше минимального предела
-            angle = ANGLE_MIN
+        if angle > self.ANGLE_MAX:  # Если угол превышает максимальный предел
+            angle = self.ANGLE_MAX
+        elif angle < self.ANGLE_MIN:  # Если угол меньше минимального предела
+            angle = self.ANGLE_MIN
         return angle  # Возвращаем скорректированное значение угла
 
-    def set(self, servonum, servoangle):
+    def set(self, servoangle):
         """
         Установка угла для сервопривода
         :param servonum: номер сервопривода
@@ -36,7 +37,7 @@ class Servo(object):
         """
         angle = self.angle_limit(servoangle)  # Ограничиваем угол перед установкой
         # Подготовка команды для отправки по шине I2C
-        buf = [0xff, 0x01, servonum, angle, 0xff]
+        buf = [0xff, 0x01, self.servonum, angle, 0xff]
         try:
             # Отправка данных на микроконтроллер через I2C
             i2c.writedata(i2c.mcu_address, buf)
