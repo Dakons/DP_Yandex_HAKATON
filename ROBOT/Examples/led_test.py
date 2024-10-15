@@ -1,5 +1,13 @@
+import sys
+import os
+
+# Получаем путь к директории ROBOT
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Добавляем libs в sys.path
+sys.path.append(parent_dir)
+
 import time
-from DP_LED import CarLight  # Импорт класса CarLight из библиотеки DP_LED
+from libs.DP_LED import CarLight  # Импорт класса CarLight из библиотеки DP_LED
 
 # Инициализация объекта для управления светодиодами
 car_light = CarLight()

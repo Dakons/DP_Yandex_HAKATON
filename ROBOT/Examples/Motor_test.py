@@ -1,6 +1,14 @@
-import DP_MotorMoveLibr as Motor  # Импортируем библиотеку для управления моторами
+import sys
+import os
+
+# Получаем путь к директории ROBOT
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Добавляем libs в sys.path
+sys.path.append(parent_dir)
+
+import libs.DP_MotorMoveLibr as Motor  # Импортируем библиотеку для управления моторами
 import time  # Импортируем модуль для работы со временем
-import DP_servo as servo  # Импортируем библиотеку для управления сервоприводами
+
 
 speed_left = -100
 speed_right = 100
@@ -15,10 +23,5 @@ time.sleep(1.5)
 Motor.MotorMove(speed_right, speed_right)
 time.sleep(1)
 
-
-#
-#servo_controller = servo.Servo()  # Создаем объект управления сервоприводами
-
-#servo_controller.set(servonum=2, servoangle=70)  # Устанавливаем угол в 90 градусов
 
 

@@ -1,4 +1,8 @@
-import RPi.GPIO as GPIO
+import sys
+import os
+
+
+#import RPi.GPIO as GPIO
 import DP_GPIO as gpio
 
 

@@ -1,5 +1,13 @@
+import sys
+import os
+
+# Получаем путь к директории ROBOT
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Добавляем libs в sys.path
+sys.path.append(parent_dir)
+
 import time
-from libs.DP_sonar import Ultrasonic  # Импорт класса Ultrasonic из библиотеки
+from libs.DP_sonar import Ultrasonic # Импорт класса Ultrasonic из библиотеки
 
 # Инициализация ультразвукового датчика
 trig_pin = 23  # Задаём пин для TRIG (например, GPIO 23)
