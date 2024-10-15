@@ -16,7 +16,7 @@ class PIDRegulator:
         # Вычисляем текущую ошибку
         self.regulate_error = state - data
         if self.regulate_error < 5 and self.regulate_error > -5:
-                self.regulate_error = 0
+            self.regulate_error = 0
         # Пропорциональная составляющая
         self.P = self.Kp * self.regulate_error
     
@@ -43,3 +43,9 @@ class PIDRegulator:
             return self.output_max
         else:
             return value
+
+
+
+#нужно реализовать волновое воздействие
+
+#
