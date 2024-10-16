@@ -2,7 +2,6 @@ import sys
 import os
 import time
 import threading  # Добавляем поддержку многопоточности
-import stopit
 
 # Константы
 BAZASPEED = 5
@@ -54,9 +53,10 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
 
     # Засекаем время начала
     start_time = time.time()
-    sweep_permission = "YES"
+    sweep_permission = True
     sweep_timemarker = 0.0
     sweep_thread = None  # Инициализируем переменную потока
+    sweep_stop_flag = threading.Event()  # Создаем флаг для остановки потока
 
     while True:
 
@@ -78,24 +78,32 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
         Vector = VectorRegulator.regulate(distance_filtered, setpoint)
 
         if (time.time() - sweep_timemarker) > 1:
-            sweep_permission = "YES"
+            sweep_permission = True
 
         # Запускаем sweep в отдельном потоке, чтобы не блокировать основной код
-        if sweep_permission == "YES" and Vector != 0:
-            sweep_permission = "NO"
+        if sweep_permission and Vector != 0:
+            sweep_permission = False
             sweep_timemarker = time.time()
             # Создаем и запускаем поток
-            sweep_thread = threading.Thread(target=Movement.sweep, args=(BAZASPEED, Vector, 1, side))
+            sweep_thread = threading.Thread(target=Movement.sweep, args=(BAZASPEED, Vector, 1, side, sweep_stop_flag))
             sweep_thread.start()
 
-        Motor.MotorMove(BAZASPEED, BAZASPEED)  
+        Motor.MotorMove(BAZASPEED, BAZASPEED)
 
         # Проверяем время, чтобы завершить выполнение через заданное время
         current_time = time.time()
         if (current_time - start_time) > drive_time:
             if sweep_thread is not None and sweep_thread.is_alive():
-                stopit.kill(sweep_thread)  # Завершаем поток, если он активен
+                sweep_stop_flag.set()  # Устанавливаем флаг остановки
+                sweep_thread.join()  # Ожидаем завершения потока
             break
 
     # Остановка моторов после завершения движения
     Motor.MotorMove(0, 0)
+
+# В функции sweep вам нужно будет добавить логику для проверки флага остановки
+# Например:
+# def sweep(speed, vector, duration, side, stop_flag):
+#     while not stop_flag.is_set():
+#         # Ваш код для выполнения трюков
+#         time.sleep(0.1)  # Задержка для снижения нагрузки на CPU
