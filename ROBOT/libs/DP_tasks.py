@@ -2,6 +2,7 @@ import sys
 import os
 import time
 import threading  # Добавляем поддержку многопоточности
+import stopit
 
 # Константы
 BAZASPEED = 5
@@ -27,7 +28,7 @@ Filter_sonar = Filter(5, 0.3)
 MoveData = TelemetrySender()
 
 # Моторное движение и серво
-sonServo = Servo(ANGLE_MAX = 180, ANGLE_MIN = 0, servonum=7)
+sonServo = Servo(ANGLE_MAX=180, ANGLE_MIN=0, servonum=7)
 sonServo.set(90)
 
 def constrain(value, min_value, max_value):
@@ -49,12 +50,13 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
     drive_time = distance * 1
 
     # Инициализация регулятора
-    VectorRegulator = PIDRegulator(Kp=Kp, Ki=Ki, Kd=Kd,output_min=-100,output_max=100)
+    VectorRegulator = PIDRegulator(Kp=Kp, Ki=Ki, Kd=Kd, output_min=-100, output_max=100)
 
     # Засекаем время начала
     start_time = time.time()
     sweep_permission = "YES"
     sweep_timemarker = 0.0
+    sweep_thread = None  # Инициализируем переменную потока
 
     while True:
 
@@ -82,22 +84,17 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
         if sweep_permission == "YES" and Vector != 0:
             sweep_permission = "NO"
             sweep_timemarker = time.time()
-            
-            # Запуск трюков в новом потоке
-            threading.Thread(target=Movement.sweep, args=(BAZASPEED, Vector, 1, side)).start()
+            # Создаем и запускаем поток
+            sweep_thread = threading.Thread(target=Movement.sweep, args=(BAZASPEED, Vector, 1, side))
+            sweep_thread.start()
 
         Motor.MotorMove(BAZASPEED, BAZASPEED)  
-
-        # Отправка телеметрии
-        #MoveData.send_telemetry("P", VectorRegulator.P)
-        #MoveData.send_telemetry("I", VectorRegulator.I)
-        #MoveData.send_telemetry("D", VectorRegulator.D)
-        #MoveData.send_telemetry("Error", VectorRegulator.regulate_error)
-        #MoveData.send_telemetry("Vector", Vector)
 
         # Проверяем время, чтобы завершить выполнение через заданное время
         current_time = time.time()
         if (current_time - start_time) > drive_time:
+            if sweep_thread is not None and sweep_thread.is_alive():
+                stopit.kill(sweep_thread)  # Завершаем поток, если он активен
             break
 
     # Остановка моторов после завершения движения
