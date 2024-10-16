@@ -1,10 +1,10 @@
 import sys
 import os
 import time
+import threading  # Добавляем поддержку многопоточности
 
 # Константы
 BAZASPEED = 5
-
 
 # Получаем путь к директории ROBOT
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -19,6 +19,7 @@ from libs.DP_teleplot import TelemetrySender
 from libs.DP_Filter import Filter
 from libs.DP_servo import Servo
 import libs.DP_MotorMovements as Movement
+
 # Фильтр для сенсора
 Filter_sonar = Filter(5, 0.3)
 
@@ -54,51 +55,46 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
     start_time = time.time()
     sweep_permission = "YES"
     sweep_timemarker = 0.0
+
     while True:
 
         # Логика скорости с учетом положения стены
         if side == 'LEFT':
             sonServo.set(180)
-            # Если стена слева
-            #Left_Speed = BAZASPEED - Vector
-            #Right_Speed = BAZASPEED + Vector
         elif side == 'RIGHT':
             sonServo.set(0)
-            # Если стена справа
-           # Left_Speed = BAZASPEED + Vector
-            #Right_Speed = BAZASPEED - Vector
         else:
             raise ValueError("Неверное значение для 'side'. Ожидается 'left' или 'right'.")
+
         # Получаем расстояние от датчика
         distance = Ultrasonic.get_distance()
         distance_filtered = round(Filter_sonar.filter(distance))
         MoveData.send_telemetry("Distance", distance_filtered)
         print(distance_filtered)
-        
-        
+
         # ПИД регуляция расстояния до стены
         Vector = VectorRegulator.regulate(distance_filtered, setpoint)
-        
-        
+
         if (time.time() - sweep_timemarker) > 1:
-            sweep_permission == "YES"
-        # Передаем скорости на моторы
-        
-        if sweep_permission == "YES" and Vector !=0:
-            sweep_permission == "NO"
+            sweep_permission = "YES"
+
+        # Запускаем sweep в отдельном потоке, чтобы не блокировать основной код
+        if sweep_permission == "YES" and Vector != 0:
+            sweep_permission = "NO"
             sweep_timemarker = time.time()
-            Movement.sweep(BAZASPEED, Vector, 1, side)#Нужно намутить контроль по времени, чтобы не делалось больше чем надо
             
+            # Запуск трюков в новом потоке
+            threading.Thread(target=Movement.sweep, args=(BAZASPEED, Vector, 1, side)).start()
+
         Motor.MotorMove(BAZASPEED, BAZASPEED)  
 
         # Отправка телеметрии
-        
         #MoveData.send_telemetry("P", VectorRegulator.P)
         #MoveData.send_telemetry("I", VectorRegulator.I)
         #MoveData.send_telemetry("D", VectorRegulator.D)
         #MoveData.send_telemetry("Error", VectorRegulator.regulate_error)
         #MoveData.send_telemetry("Vector", Vector)
-        
+
         # Проверяем время, чтобы завершить выполнение через заданное время
         current_time = time.time()
         if (current_time - start_time) > drive_time:
@@ -106,5 +102,3 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
 
     # Остановка моторов после завершения движения
     Motor.MotorMove(0, 0)
-
-
