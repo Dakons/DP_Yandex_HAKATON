@@ -1,0 +1,38 @@
+import socket
+import time
+
+# Настройки для UDP и TCP
+UDP_IP = "Raspberry Pi IP"  # IP-адрес Raspberry Pi
+UDP_PORT = 5005
+TCP_IP = "Raspberry Pi IP"  # IP-адрес Raspberry Pi
+TCP_PORT = 5006
+
+# Функция для отправки UDP-команд
+def send_udp_commands():
+    udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Создание UDP-сокета
+    while True:
+        command = "Команда от ПК"  # Пример команды
+        udp_sock.sendto(command.encode(), (UDP_IP, UDP_PORT))
+        print(f"Отправлена команда по UDP: {command}")
+        time.sleep(5)  # Отправлять команды каждые 5 секунд
+
+# Функция для отправки TCP-потока (например, видео)
+def send_tcp_data():
+    tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Создание TCP-сокета
+    tcp_sock.connect((TCP_IP, TCP_PORT))  # Подключение к серверу
+
+    while True:
+        data = b"Видео данные"  # Пример данных (видео-пакет)
+        tcp_sock.sendall(data)
+        print(f"Отправлены данные по TCP: {len(data)} байт")
+        time.sleep(1)  # Имитация отправки данных каждую секунду
+
+# Запуск клиентов для UDP и TCP
+udp_thread = threading.Thread(target=send_udp_commands)
+tcp_thread = threading.Thread(target=send_tcp_data)
+
+udp_thread.start()
+tcp_thread.start()
+
+udp_thread.join()
+tcp_thread.join()
