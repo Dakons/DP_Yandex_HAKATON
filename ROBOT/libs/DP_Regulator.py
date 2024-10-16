@@ -33,7 +33,7 @@ class PIDRegulator:
         # Линейная интерполяция для ограничения выходного сигнала
         PID_output = self.linear_interpolate(PID_output)
         
-        return PID_output
+        return round(PID_output,1)
 
     def linear_interpolate(self, value: float) -> float:
         """Ограничивает значение в заданных пределах."""

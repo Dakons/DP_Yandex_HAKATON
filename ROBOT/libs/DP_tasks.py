@@ -72,13 +72,13 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
         # Получаем расстояние от датчика
         distance = Ultrasonic.get_distance()
         distance_filtered = round(Filter_sonar.filter(distance))
-        MoveData.send_telemetry("Distance", distance_filtered)
+        #MoveData.send_telemetry("Distance", distance_filtered)
         print(distance_filtered)
         
         
         # ПИД регуляция расстояния до стены
         Vector = VectorRegulator.regulate(distance_filtered, setpoint)
-        
+        Vector = Vector * 0.1
         
         if (time.time() - sweep_timemarker) > Vector:
             sweep_permission == "YES"
@@ -96,8 +96,8 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
         #MoveData.send_telemetry("P", VectorRegulator.P)
         #MoveData.send_telemetry("I", VectorRegulator.I)
         #MoveData.send_telemetry("D", VectorRegulator.D)
-        #MoveData.send_telemetry("Error", VectorRegulator.regulate_error)
-        #MoveData.send_telemetry("Vector", Vector)
+        MoveData.send_telemetry("Error", VectorRegulator.regulate_error)
+        MoveData.send_telemetry("Vector", Vector)
         
         # Проверяем время, чтобы завершить выполнение через заданное время
         current_time = time.time()

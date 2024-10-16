@@ -32,14 +32,14 @@ def sweep (speed_normal, speed_boom, duration, direction: str):
         Motor.MotorMove(speed_boomed, speed_normal)
         time.sleep(duration)
         Motor.MotorMove(speed_normal, speed_boomed)
-        time.sleep(duration*1.5)
+        time.sleep(duration)
         Motor.MotorMove(speed_normal, speed_normal)
     elif direction_inside == "LEFT":
         speed_boomed = speed_normal+speed_boom
         Motor.MotorMove(speed_normal, speed_boomed)
         time.sleep(duration)
         Motor.MotorMove(speed_boomed, speed_normal)
-        time.sleep(duration*1.5)
+        time.sleep(duration)
         Motor.MotorMove(speed_normal, speed_normal)
 
 
