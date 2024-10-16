@@ -1,6 +1,14 @@
+import sys
+import os
+
+# Получаем путь к директории ROBOT
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Добавляем libs в sys.path
+sys.path.append(parent_dir)
+
 import socket
 import threading
-import DP_do_command as DO
+import libs.DP_do_command as DO
 
 UDP_IP_RASP = "192.168.233.206"  # IP-адрес Raspberry Pi
 UDP_PORT_RASP = 5005
