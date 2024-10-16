@@ -1,10 +1,10 @@
 import socket
 import time
 
-ipadress = "192.168.74.13"
+ipadress = "192.168.233.217"
 
 class TelemetrySender:
-    def __init__(self, address=("192.168.74.13", 47269)):
+    def __init__(self, address=(ipadress, 47269)):
         self.teleplotAddr = address
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 

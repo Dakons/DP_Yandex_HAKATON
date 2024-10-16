@@ -16,7 +16,7 @@ import libs.DP_MotorMoveLibr as Motor
 
 
 
-
-time.sleep(1)
-Task.drive_along_wall("RIGHT",10,75,0.5,0,0)
+Motor.MotorMove(0,0)
+time.sleep(2)
+Task.drive_along_wall(side="LEFT",distance=10,setpoint=50,Kp=2,Ki=0,Kd=0)
 Motor.MotorMove(0,0)

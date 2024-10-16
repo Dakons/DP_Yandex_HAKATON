@@ -6,7 +6,9 @@ sys.path.append(parent_dir)
 
 #import RPi.GPIO as GPIO
 import libs.DP_GPIO as gpio
+from libs.DP_teleplot import TelemetrySender
 
+MoveData = TelemetrySender()
 
 def MotorMove(M1SPEED, M2SPEED):
     
@@ -18,6 +20,9 @@ def MotorMove(M1SPEED, M2SPEED):
         M2SPEED = 100
     if M1SPEED > 100:
         M1SPEED = 100
+        
+    #MoveData.send_telemetry("M1SPEED",M1SPEED)
+    #MoveData.send_telemetry("M2SPEED",M2SPEED)
     # Управление первым мотором
     if M1SPEED < 0:  # Движение вперед
         gpio.digital_write(gpio.IN1, True)

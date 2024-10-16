@@ -3,7 +3,8 @@ import os
 import time
 
 # Константы
-BAZASPEED = 20
+BAZASPEED = 5
+
 
 # Получаем путь к директории ROBOT
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -25,8 +26,8 @@ Filter_sonar = Filter(5, 0.3)
 MoveData = TelemetrySender()
 
 # Моторное движение и серво
-sonServo = Servo()
-sonServo.set(7, 0)
+sonServo = Servo(ANGLE_MAX = 180, ANGLE_MIN = 0, servonum=7)
+sonServo.set(90)
 
 def constrain(value, min_value, max_value):
     """Ограничивает значение в заданных пределах."""
@@ -47,21 +48,22 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
     drive_time = distance * 1
 
     # Инициализация регулятора
-    VectorRegulator = PIDRegulator(Kp=Kp, Ki=Ki, Kd=Kd,output_min=-30,output_max=30)
+    VectorRegulator = PIDRegulator(Kp=Kp, Ki=Ki, Kd=Kd,output_min=-100,output_max=100)
 
     # Засекаем время начала
     start_time = time.time()
-    
+    sweep_permission = "YES"
+    sweep_timemarker = 0.0
     while True:
 
         # Логика скорости с учетом положения стены
-        if side == 'left':
-            sonServo.set(7, 0)
+        if side == 'LEFT':
+            sonServo.set(180)
             # Если стена слева
             #Left_Speed = BAZASPEED - Vector
             #Right_Speed = BAZASPEED + Vector
-        elif side == 'right':
-            sonServo.set(7, 180)
+        elif side == 'RIGHT':
+            sonServo.set(0)
             # Если стена справа
            # Left_Speed = BAZASPEED + Vector
             #Right_Speed = BAZASPEED - Vector
@@ -70,25 +72,32 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
         # Получаем расстояние от датчика
         distance = Ultrasonic.get_distance()
         distance_filtered = round(Filter_sonar.filter(distance))
+        MoveData.send_telemetry("Distance", distance_filtered)
+        print(distance_filtered)
+        
         
         # ПИД регуляция расстояния до стены
         Vector = VectorRegulator.regulate(distance_filtered, setpoint)
         
         
-        
+        if (time.time() - sweep_timemarker) > 1:
+            sweep_permission == "YES"
         # Передаем скорости на моторы
-        Motor.MotorMove(BAZASPEED, BAZASPEED)    
-        Movement.sweep(BAZASPEED, Vector, 0.1, side)#Нужно намутить контроль по времени, чтобы не делалось больше чем надо
+        
+        if sweep_permission == "YES" and Vector !=0:
+            sweep_permission == "NO"
+            sweep_timemarker = time.time()
+            Movement.sweep(BAZASPEED, Vector, 1, side)#Нужно намутить контроль по времени, чтобы не делалось больше чем надо
             
-
+        Motor.MotorMove(BAZASPEED, BAZASPEED)  
 
         # Отправка телеметрии
-        MoveData.send_telemetry("Distance", distance_filtered)
-        MoveData.send_telemetry("P", VectorRegulator.P)
-        MoveData.send_telemetry("I", VectorRegulator.I)
-        MoveData.send_telemetry("D", VectorRegulator.D)
-        MoveData.send_telemetry("Error", VectorRegulator.regulate_error)
-        MoveData.send_telemetry("Vector", Vector)
+        
+        #MoveData.send_telemetry("P", VectorRegulator.P)
+        #MoveData.send_telemetry("I", VectorRegulator.I)
+        #MoveData.send_telemetry("D", VectorRegulator.D)
+        #MoveData.send_telemetry("Error", VectorRegulator.regulate_error)
+        #MoveData.send_telemetry("Vector", Vector)
         
         # Проверяем время, чтобы завершить выполнение через заданное время
         current_time = time.time()
@@ -97,4 +106,5 @@ def drive_along_wall(side: str, distance, setpoint, Kp, Ki, Kd):
 
     # Остановка моторов после завершения движения
     Motor.MotorMove(0, 0)
+
 
