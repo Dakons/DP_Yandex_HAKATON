@@ -100,15 +100,15 @@ def drive_along_wall(side, distance, setpoint, kp, ki, kd):
 def add_angle(added_angle: float, angleMove):
     if added_angle > 0:
         Motor.MotorMove(BAZASPEED, -BAZASPEED)
-        added_angle = added_angle# * 0.003
-        added_angle = added_angle# * 1.5
+        added_angle = added_angle* 0.003
+        added_angle = added_angle* 1.5
         print(added_angle)
         time.sleep(added_angle)
     else:
         Motor.MotorMove(-BAZASPEED, BAZASPEED)
         added_angle = -added_angle
-        added_angle = added_angle# * 0.003
-        added_angle = added_angle#* 1.5
+        added_angle = added_angle*0.003
+        added_angle = added_angle*1.5
         print(added_angle)
         time.sleep(added_angle)
     #Motor.MotorMove(0,0)
