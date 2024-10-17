@@ -40,17 +40,17 @@ def telemetry_and_regulator(VectorRegulator, setpoint, pid_output, telemetry_act
             distance_filtered -= SONAR_OFFSET  # Если справа, прибавляем поправку
 
         # Вычисляем воздействие PID
-        pid_output[0] = VectorRegulator.regulate(distance_filtered, setpoint)
+        pid_output = VectorRegulator.regulate(distance_filtered, setpoint)
         
         # Отправляем данные телеметрии
         MoveData.send_telemetry("Distance", distance_filtered)
         MoveData.send_telemetry("Error", VectorRegulator.regulate_error)
-        MoveData.send_telemetry("Vector", pid_output[0])
+        MoveData.send_telemetry("Vector", pid_output)
         
         time.sleep(0.01)
 
 def drive_along_wall(side, distance, setpoint, kp, ki, kd):
-    pid_output = [0]  # Массив используется для передачи данных между потоками
+    pid_output = 0  # Массив используется для передачи данных между потоками
     telemetry_active = threading.Event()
     telemetry_active.set()
     
