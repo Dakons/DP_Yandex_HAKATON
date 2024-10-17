@@ -46,7 +46,8 @@ def telemetry_and_regulator(VectorRegulator, setpoint, pid_output, telemetry_act
         MoveData.send_telemetry("Distance", distance_filtered)
         MoveData.send_telemetry("Error", VectorRegulator.regulate_error)
         MoveData.send_telemetry("Vector", pid_output)
-        
+        MoveData.send_telemetry("I", VectorRegulator.I)
+        MoveData.send_telemetry("P", VectorRegulator.P)
         time.sleep(0.01)
 
 def drive_along_wall(side, distance, setpoint, kp, ki, kd):
