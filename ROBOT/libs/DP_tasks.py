@@ -17,6 +17,7 @@ import libs.DP_MotorMovements as Movement
 
 # Константы
 BAZASPEED = 80
+SONAR_OFFSET = 6  # Поправка в сантиметрах для датчика, установленного сбоку
 
 # Инициализация компонентов
 Filter_sonar = Filter(5, 0.3)
@@ -24,11 +25,21 @@ MoveData = TelemetrySender()
 sonServo = Servo(ANGLE_MAX=180, ANGLE_MIN=0, servonum=7)
 sonServo.set(90)
 
-def telemetry_and_regulator(VectorRegulator, setpoint, pid_output, telemetry_active):
+def telemetry_and_regulator(VectorRegulator, setpoint, pid_output, telemetry_active, side):
     """Мониторинг, вычисление воздействия PID и отправка данных телеметрии."""
     while telemetry_active.is_set():
         distance = Ultrasonic.get_distance()
+        
+        # Применяем фильтр к данным с датчика
         distance_filtered = round(Filter_sonar.filter(distance))
+        
+        # Корректируем расстояние в зависимости от стороны установки датчика
+        if side == 'LEFT':
+            distance_filtered += SONAR_OFFSET  # Если слева, отнимаем поправку
+        elif side == 'RIGHT':
+            distance_filtered -= SONAR_OFFSET  # Если справа, прибавляем поправку
+
+        # Вычисляем воздействие PID
         pid_output[0] = VectorRegulator.regulate(distance_filtered, setpoint)
         
         # Отправляем данные телеметрии
@@ -50,7 +61,8 @@ def drive_along_wall(side, distance, setpoint, kp, ki, kd):
     elif side == 'RIGHT':
         sonServo.set(0)
     
-    telemetry_thread = threading.Thread(target=telemetry_and_regulator, args=(VectorRegulator, setpoint, pid_output, telemetry_active))
+    # Запускаем поток для телеметрии и PID регулирования
+    telemetry_thread = threading.Thread(target=telemetry_and_regulator, args=(VectorRegulator, setpoint, pid_output, telemetry_active, side))
     telemetry_thread.start()
 
     start_time = time.time()
@@ -71,31 +83,13 @@ def drive_along_wall(side, distance, setpoint, kp, ki, kd):
     telemetry_thread.join()
     Motor.MotorMove(0, 0)
 
-def add_angle (added_angle, angleMove):
-    if (added_angle > 0):
+def add_angle(added_angle, angleMove):
+    if added_angle > 0:
         Motor.MotorMove(BAZASPEED, -BAZASPEED)
         time.sleep(added_angle * (3 / 360))
     else:
         Motor.MotorMove(-BAZASPEED, BAZASPEED)
         time.sleep(-added_angle * (3 / 360))
 
-'''
-def control_angle(set_angle, kp, ki, kd):
-    AngleRegulator = PIDRegulator(Kp=kp, Ki=ki, Kd=kd, output_min=-10, output_max=10)
-    NowAngle = getangle()
-    deltaAngle = set_angle - NowAngle
-    Motor.MotorMove(angleMove, angleMove)
-    time.time(deltaAngle * (1.5 / 360))
-    while True:
-        NowAngle = getangle()
-        if (deltaAngle < 5 and deltaAngle > -5):
-            break
-        angleMove=AngleRegulator.regulate(10,set_angle)
-        Motor.MotorMove(angleMove, angleMove)
-        time.time(0.5)
-        Motor.MotorMove(0,0)
-'''
-
-    
 # Пример использования
-#drive_along_wall('LEFT', distance=10, setpoint=50, kp=1.0, ki=0.1, kd=0.05)
+# drive_along_wall('LEFT', distance=10, setpoint=50, kp=1.0, ki=0.1, kd=0.05)

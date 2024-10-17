@@ -11,8 +11,11 @@ import libs.DP_MotorMovements as Movement
 
 
 
+Motor.MotorMove(0, 0)
+time.sleep(2)
+Task.telemetry_and_regulator(1, 1, 1, 1, "LEFT")
 
-
+"""
 # Основная программа
 Motor.MotorMove(0, 0)
 time.sleep(2)
@@ -27,4 +30,4 @@ Motor.MotorMove(0,0)
 time.sleep(2)
 Task.drive_along_wall(side="RIGHT", distance=10, setpoint=30, kp=0.3, ki=-0.01, kd=0)
 Motor.MotorMove(0,0)
-
+"""
