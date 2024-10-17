@@ -17,13 +17,16 @@ time.sleep(2)
 #Task.add_angle(90,0)
 #time.sleep(2)
 # Запускаем движение вдоль стены
-Task.drive_along_wall(side="LEFT", distance=20, setpoint=30, kp=2, ki=-0.1, kd=0)
+Task.drive_along_wall(side="LEFT", distance=12, setpoint=30, kp=4, ki=-0.04, kd=0)#-0.16
+Motor.MotorMove(0,0)
+time.sleep(2)
+Task.add_angle(180.0,0)
 Motor.MotorMove(0,0)
 time.sleep(2)
 '''
 Task.add_angle(180.0,0)
 time.sleep(2)
-Task.drive_along_wall(side="RIGHT", distance=10, setpoint=30, kp=2, ki=-0.1, kd=0)
+Task.drive_along_wall(side="RIGHT", distance=10, setpoint=30, kp=0.2, ki=-0.01, kd=0)
 time.sleep(2)
 Motor.MotorMove(0,0)
 time.sleep(2)
