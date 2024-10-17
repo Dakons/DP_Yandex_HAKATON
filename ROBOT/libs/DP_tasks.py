@@ -18,7 +18,7 @@ import libs.DP_MotorMovements as Movement
 
 # Константы
 BAZASPEED = 80
-SONAR_OFFSET = 6  # Поправка в сантиметрах для датчика, установленного сбоку
+SONAR_OFFSET = -4  # Поправка в сантиметрах для датчика, установленного сбоку
 
 # Инициализация компонентов
 Filter_sonar = Filter(5, 0.3)
