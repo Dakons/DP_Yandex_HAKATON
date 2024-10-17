@@ -1,4 +1,3 @@
-
 import sys
 import os
 import time
@@ -17,17 +16,20 @@ from libs.DP_servo import Servo
 import libs.DP_MotorMovements as Movement
 
 # Константы
-BAZASPEED = 80
+BAZASPEED = 75
 SONAR_OFFSET = -4  # Поправка в сантиметрах для датчика, установленного сбоку
 
 # Инициализация компонентов
+pid_output = 0.0
+pid_output_lock = threading.Lock()  # Создаем семафор для pid_output
 Filter_sonar = Filter(5, 0.3)
 MoveData = TelemetrySender()
 sonServo = Servo(ANGLE_MAX=180, ANGLE_MIN=0, servonum=7)
 sonServo.set(90)
 
-def telemetry_and_regulator(VectorRegulator, setpoint, pid_output, telemetry_active, side):
+def telemetry_and_regulator(VectorRegulator, setpoint, telemetry_active, side):
     """Мониторинг, вычисление воздействия PID и отправка данных телеметрии."""
+    global pid_output  # Объявляем переменную как глобальную
     while telemetry_active.is_set():
         distance = Ultrasonic.get_distance()
         
@@ -39,10 +41,15 @@ def telemetry_and_regulator(VectorRegulator, setpoint, pid_output, telemetry_act
             distance_filtered += SONAR_OFFSET  # Если слева, отнимаем поправку
         elif side == 'RIGHT':
             distance_filtered -= SONAR_OFFSET  # Если справа, прибавляем поправку
+        #print(distance_filtered)
 
         # Вычисляем воздействие PID
-        pid_output = VectorRegulator.regulate(distance_filtered, setpoint)
+        pid_output_value = VectorRegulator.regulate(distance_filtered, setpoint)
         
+        # Используем семафор для безопасного доступа к pid_output
+        with pid_output_lock:
+            pid_output = pid_output_value  # Записываем значение в pid_output
+
         # Отправляем данные телеметрии
         MoveData.send_telemetry("Distance", distance_filtered)
         MoveData.send_telemetry("Error", VectorRegulator.regulate_error)
@@ -53,11 +60,10 @@ def telemetry_and_regulator(VectorRegulator, setpoint, pid_output, telemetry_act
         time.sleep(0.01)
 
 def drive_along_wall(side, distance, setpoint, kp, ki, kd):
-    pid_output = 0  # Массив используется для передачи данных между потоками
     telemetry_active = threading.Event()
     telemetry_active.set()
     
-    VectorRegulator = PIDRegulator(Kp=kp, Ki=ki, Kd=kd, output_min=-10, output_max=10)
+    VectorRegulator = PIDRegulator(Kp=kp, Ki=ki, Kd=kd, output_min=-20, output_max=20)
     
     if side == 'LEFT':
         sonServo.set(180)
@@ -65,7 +71,7 @@ def drive_along_wall(side, distance, setpoint, kp, ki, kd):
         sonServo.set(0)
     
     # Запускаем поток для телеметрии и PID регулирования
-    telemetry_thread = threading.Thread(target=telemetry_and_regulator, args=(VectorRegulator, setpoint, pid_output, telemetry_active, side))
+    telemetry_thread = threading.Thread(target=telemetry_and_regulator, args=(VectorRegulator, setpoint, telemetry_active, side))
     telemetry_thread.start()
 
     start_time = time.time()
@@ -73,10 +79,15 @@ def drive_along_wall(side, distance, setpoint, kp, ki, kd):
     Movement.Smooth_line_Start(BAZASPEED, 0.01)
 
     while True:
+        with pid_output_lock:  # Используем семафор для чтения pid_output
+            current_pid_output = pid_output
+        
         if side == 'RIGHT':
-            Motor.MotorMove(BAZASPEED - pid_output[0], BAZASPEED + pid_output[0])
+            print(side)
+            #Motor.MotorMove(BAZASPEED - current_pid_output, BAZASPEED + current_pid_output)
         elif side == 'LEFT':
-            Motor.MotorMove(BAZASPEED + pid_output[0], BAZASPEED - pid_output[0])
+            print(side)
+            #Motor.MotorMove(BAZASPEED + current_pid_output, BAZASPEED - current_pid_output)
 
         if (time.time() - start_time) > drive_time:
             Movement.Smooth_line_Stop(BAZASPEED, 0.01)
@@ -86,13 +97,20 @@ def drive_along_wall(side, distance, setpoint, kp, ki, kd):
     telemetry_thread.join()
     Motor.MotorMove(0, 0)
 
-def add_angle(added_angle, angleMove):
+def add_angle(added_angle: float, angleMove):
     if added_angle > 0:
         Motor.MotorMove(BAZASPEED, -BAZASPEED)
-        time.sleep(added_angle * (3 / 360))
+        added_angle = added_angle# * 0.003
+        added_angle = added_angle# * 1.5
+        print(added_angle)
+        time.sleep(added_angle)
     else:
         Motor.MotorMove(-BAZASPEED, BAZASPEED)
-        time.sleep(-added_angle * (3 / 360))
-
+        added_angle = -added_angle
+        added_angle = added_angle# * 0.003
+        added_angle = added_angle#* 1.5
+        print(added_angle)
+        time.sleep(added_angle)
+    #Motor.MotorMove(0,0)
 # Пример использования
 # drive_along_wall('LEFT', distance=10, setpoint=50, kp=1.0, ki=0.1, kd=0.05)
