@@ -16,7 +16,7 @@ from libs.DP_servo import Servo
 import libs.DP_MotorMovements as Movement
 
 # Константы
-BAZASPEED = 5
+BAZASPEED = 80
 
 # Инициализация компонентов
 Filter_sonar = Filter(5, 0.3)
@@ -58,9 +58,9 @@ def drive_along_wall(side, distance, setpoint, kp, ki, kd):
     Movement.Smooth_line_Start(BAZASPEED, 0.01)
 
     while True:
-        if side == 'LEFT':
+        if side == 'RIGHT':
             Motor.MotorMove(BAZASPEED - pid_output[0], BAZASPEED + pid_output[0])
-        elif side == 'RIGHT':
+        elif side == 'LEFT':
             Motor.MotorMove(BAZASPEED + pid_output[0], BAZASPEED - pid_output[0])
 
         if (time.time() - start_time) > drive_time:
@@ -74,10 +74,10 @@ def drive_along_wall(side, distance, setpoint, kp, ki, kd):
 def add_angle (added_angle, angleMove):
     if (added_angle > 0):
         Motor.MotorMove(BAZASPEED, -BAZASPEED)
-        time.time(added_angle * (1.5 / 360))
+        time.sleep(added_angle * (3 / 360))
     else:
         Motor.MotorMove(-BAZASPEED, BAZASPEED)
-        time.time(added_angle * (1.5 / 360))
+        time.sleep(-added_angle * (3 / 360))
 
 '''
 def control_angle(set_angle, kp, ki, kd):
