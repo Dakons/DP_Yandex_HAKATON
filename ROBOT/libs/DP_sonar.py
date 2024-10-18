@@ -17,6 +17,7 @@ TRIG = 17   # Пин для отправки сигнала триггера (а
 gpio.digital_write(TRIG, 0)  # Устанавливаем TRIG в низкий уровень (LOW)
 
 def get_distance():
+    SOS_FLAG = 0
     # Функция для получения расстояния в сантиметрах
     gpio.digital_write(TRIG, 1)  # Устанавливаем TRIG в высокий уровень
     time.sleep(0.00001)  # Удерживаем HIGH в течение 10 мкс
