@@ -86,11 +86,16 @@ def add_angle(added_angle: float):
 drive_along_wall(side ="LEFT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
+
 add_angle(180)
 Motor.MotorMove(0, 0)
+time.sleep(1)
+
 drive_along_wall(side ="RIGHT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
+
 add_angle(180)
+time.sleep(1)
 Motor.MotorMove(0, 0)
     
