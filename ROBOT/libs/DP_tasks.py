@@ -22,7 +22,7 @@ SonarFilter = Filter(5, 0.3)
 
 sonarServo = Servo(ANGLE_MAX=180, ANGLE_MIN=0, servonum=7)
 sonarServo.set(90)
-LineRegulator = PIDRegulator(Kp=12, Ki=-0.04, Kd=0, output_min=-20, output_max=20, i_buffer_size=200)
+LineRegulator = PIDRegulator(Kp=12, Ki=-0.04, Kd=0, output_min=-20, output_max=20, i_buffer_size=240)
 time.sleep(3)
 
 def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
@@ -105,19 +105,20 @@ def drive_line(Duration):
     print("END Smooth stop")
     Motor.MotorMove(0, 0)
 
-drive_along_wall(side ="LEFT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
+drive_along_wall(side ="LEFT", Duration = 5, setpoint = 30, kp = 16, ki = -0.08, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
 
-add_angle(180)
+
+add_angle(-90)
+time.sleep(1)
+drive_line(2)
+time.sleep(1)
+
+drive_along_wall(side ="LEFT", Duration = 5, setpoint = 30, kp = 16, ki = -0.08, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
 
-drive_along_wall(side ="RIGHT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
-
-add_angle(180)
-time.sleep(1)
-Motor.MotorMove(0, 0)
     
