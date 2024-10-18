@@ -85,3 +85,12 @@ def Smooth_line_Stop(speed_normal, step):
         time.sleep(step)
     Motor.MotorMove(0,0)
 
+def Add_bit_angle(speed_normal, direction, steptime, stepcount):
+    for i in range(stepcount):
+        if direction == "CLOCKWISE":   
+            Motor.MotorMove(speed_normal,-speed_normal)
+            time.sleep(steptime)
+        elif direction == "COUNTERCLOCKWISE":
+            Motor.MotorMove(-speed_normal,speed_normal)
+            time.sleep(steptime)
+    Motor.MotorMove(0,0)

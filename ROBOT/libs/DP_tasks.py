@@ -91,7 +91,7 @@ def add_angle(added_angle: float):
         time.sleep(added_angle)
     Motor.MotorMove(0, 0)
 """
-
+"""
 def add_angle(added_angle: float):
     direction = ""
     if abs(added_angle)<= 180:
@@ -117,7 +117,16 @@ def add_angle(added_angle: float):
     Movement.Smooth_turn_Stop(BAZASPEED, 0.01, direction)
     print("END Smooth turn stop")
     Motor.MotorMove(0, 0)
-
+"""
+def add_angle(added_angle):
+    if (added_angle < 0):
+        direction = "CLOCKWISE"
+        added_angle = abs(added_angle * 0.003 * 3.3)
+    elif added_angle > 0:
+        direction = "COUNTERCLOCKWISE"
+        added_angle = abs(added_angle * 0.003 * 3.15)
+    steps = added_angle//5
+    Movement.Add_bit_angle(BAZASPEED,direction,0.1,steps)
 
 def drive_line(Duration):
     print("START Smooth start")
