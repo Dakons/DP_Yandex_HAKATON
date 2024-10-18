@@ -22,7 +22,7 @@ SonarFilter = Filter(5, 0.3)
 sonarServo = Servo(ANGLE_MAX=180, ANGLE_MIN=0, servonum=7)
 sonarServo.set(90)
 LineRegulator = PIDRegulator(Kp=12, Ki=-0.04, Kd=0, output_min=-20, output_max=20, i_buffer_size=200)
-
+time.sleep(3)
 
 def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
     
