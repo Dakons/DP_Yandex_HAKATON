@@ -45,7 +45,7 @@ def sweep (speed_normal, speed_boom, duration, direction: str):
 def turn (speed_normal, direction):
     if direction == "CLOCKWISE":
         Motor.MotorMove(speed_normal, -speed_normal)
-    elif direction > "COUNTERCLOCKWISE":
+    elif direction == "COUNTERCLOCKWISE":
         Motor.MotorMove(-speed_normal, speed_normal)
 
 
