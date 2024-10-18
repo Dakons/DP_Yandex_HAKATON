@@ -3,6 +3,7 @@ import os
 import time
 #import threading
 BAZASPEED = 75
+SONAR_OFFSET = -4  # Поправка в сантиметрах для датчика, установленного сбоку
 # Получаем путь к директории ROBOT
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
@@ -37,8 +38,15 @@ def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
 
     while True:
         Dist = Ultrasonic.get_distance()
+
+        
         Dist_filtered = round(SonarFilter.filter(Dist))
 
+        if side == 'LEFT':
+            Dist_filtered += SONAR_OFFSET  # Если слева, отнимаем поправку
+        elif side == 'RIGHT':
+            Dist_filtered -= SONAR_OFFSET  # Если справа, прибавляем поправку
+            
         current_pid_output = LineRegulator.regulate(Dist_filtered, setpoint)
         
         if side == "RIGHT":
