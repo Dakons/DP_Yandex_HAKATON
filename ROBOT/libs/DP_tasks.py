@@ -33,6 +33,7 @@ def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
     
     current_pid_output = 0
     FirstTime = time.time()
+    Movement.Smooth_line_Start(BAZASPEED, 0.01) 
 
     while True:
         Dist = Ultrasonic.get_distance()
@@ -56,6 +57,10 @@ def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
 
         if time.time() - FirstTime > Duration:
              print("Task Completed. timer is off")
+             print("Smooth Stop started")
+             Movement.Smooth_line_Stop(BAZASPEED, 0.01)
+             Motor.MotorMove(0, 0)
+             print("Motor Stopped")
              break
         #time.sleep(0.01)
 
