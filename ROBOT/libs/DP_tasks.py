@@ -33,22 +33,26 @@ def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
     
     current_pid_output = 0
     FirstTime = time.time()
-    while time.time()-FirstTime>Duration:
+    while True:
         Dist = Ultrasonic.get_distance()
         Dist_filtered = round(SonarFilter.filter(Dist))
 
         #print(f"Raw distance: {Dist}, Filtered distance: {Dist_filtered}")
         if side == 'RIGHT':
+                print("RIGHT")
                 Motor.MotorMove(BAZASPEED - current_pid_output, BAZASPEED + current_pid_output)
         elif side == 'LEFT':
+                print("LEFT")
                 Motor.MotorMove(BAZASPEED + current_pid_output, BAZASPEED - current_pid_output)
-    
         DataTeleplot.send_telemetry("DISTANTION", Dist_filtered)
+
+        if time.time()-FirstTime>Duration:
+             break
         #time.sleep(0.01)
 
 
 
-drive_along_wall("LEFT", 10, 50, 12, -0.04, 0)
+drive_along_wall(side ="LEFT", Duration = 10, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
 time.sleep(1)
 drive_along_wall("RIGHT", 10, 50, 12, -0.04, 0)
     
