@@ -20,12 +20,13 @@ BAZASPEED = 75
 SONAR_OFFSET = -4  # Поправка в сантиметрах для датчика, установленного сбоку
 
 # Инициализация компонентов
-pid_output = 0.0
-pid_output_semaphore = threading.Semaphore(1)  # Создаем семафор для pid_output
-Filter_sonar = Filter(5, 0.3)
 MoveData = TelemetrySender()
 sonServo = Servo(ANGLE_MAX=180, ANGLE_MIN=0, servonum=7)
 sonServo.set(90)
+Filter_sonar = Filter(5, 0.3)
+pid_output = 0.0
+pid_output_semaphore = threading.Semaphore(1)  # Создаем семафор для pid_output
+
 
 def telemetry_and_regulator(VectorRegulator, setpoint, telemetry_active, side):
     """Мониторинг, вычисление воздействия PID и отправка данных телеметрии."""
@@ -41,15 +42,13 @@ def telemetry_and_regulator(VectorRegulator, setpoint, telemetry_active, side):
             distance_filtered += SONAR_OFFSET  # Если слева, отнимаем поправку
         elif side == 'RIGHT':
             distance_filtered -= SONAR_OFFSET  # Если справа, прибавляем поправку
-        #print(distance_filtered)
 
         # Вычисляем воздействие PID
         pid_output_value = VectorRegulator.regulate(distance_filtered, setpoint)
         
-        # Используем семафор для безопасного доступа к pid_output
-        pid_output_semaphore.acquire()
-        pid_output = pid_output_value  # Записываем значение в pid_output
-        pid_output_semaphore.release()
+        # Используем контекстный менеджер для безопасного доступа к pid_output
+        with pid_output_semaphore:
+            pid_output = pid_output_value  # Записываем значение в pid_output
 
         # Отправляем данные телеметрии
         MoveData.send_telemetry("Distance", distance_filtered)
@@ -60,11 +59,12 @@ def telemetry_and_regulator(VectorRegulator, setpoint, telemetry_active, side):
         
         time.sleep(0.01)
 
+
 def drive_along_wall(side, distance, setpoint, kp, ki, kd):
     telemetry_active = threading.Event()
     telemetry_active.set()
     
-    VectorRegulator = PIDRegulator(Kp=kp, Ki=ki, Kd=kd, output_min=-20, output_max=20, i_buffer_size = 40 )
+    VectorRegulator = PIDRegulator(Kp=kp, Ki=ki, Kd=kd, output_min=-20, output_max=20, i_buffer_size=200)
     
     if side == 'LEFT':
         sonServo.set(180)
@@ -79,25 +79,25 @@ def drive_along_wall(side, distance, setpoint, kp, ki, kd):
     drive_time = distance * 1  # Простое время для примера
     Movement.Smooth_line_Start(BAZASPEED, 0.01)
 
-    while True:
-        pid_output_semaphore.acquire()  # Используем семафор для чтения pid_output
-        current_pid_output = pid_output
-        pid_output_semaphore.release()
+    while (time.time() - start_time) < drive_time:
+        # Используем контекстный менеджер для безопасного чтения pid_output
+        with pid_output_semaphore:
+            current_pid_output = pid_output
         
+        # Движение моторов на основе текущего pid_output
         if side == 'RIGHT':
-            print(side)
             Motor.MotorMove(BAZASPEED - current_pid_output, BAZASPEED + current_pid_output)
         elif side == 'LEFT':
-            print(side)
             Motor.MotorMove(BAZASPEED + current_pid_output, BAZASPEED - current_pid_output)
 
-        if (time.time() - start_time) > drive_time:
-            Movement.Smooth_line_Stop(BAZASPEED, 0.01)
-            break
+        time.sleep(0.01)  # Не блокируем поток слишком плотно
+
+    Movement.Smooth_line_Stop(BAZASPEED, 0.01)
     telemetry_active.clear()
     telemetry_thread.join()
     Motor.MotorMove(0, 0)
-    
+
+
 def add_angle(added_angle: float, angleMove):
     if added_angle > 0:
         Motor.MotorMove(BAZASPEED, -BAZASPEED)
@@ -113,4 +113,3 @@ def add_angle(added_angle: float, angleMove):
         print(added_angle)
         time.sleep(added_angle)
     Motor.MotorMove(0, 0)
-    
