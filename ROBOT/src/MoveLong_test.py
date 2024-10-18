@@ -5,7 +5,7 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # Добавляем libs в sys.path
 sys.path.append(parent_dir)
 import time
-import libs.DP_tasks as Task
+import ROBOT.libs.DP_tasks as Task
 import libs.DP_MotorMoveLibr as Motor
 import libs.DP_MotorMovements as Movement
 
