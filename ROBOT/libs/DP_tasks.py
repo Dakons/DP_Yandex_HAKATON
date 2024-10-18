@@ -38,14 +38,21 @@ def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
         Dist = Ultrasonic.get_distance()
         Dist_filtered = round(SonarFilter.filter(Dist))
 
-        #print(f"Raw distance: {Dist}, Filtered distance: {Dist_filtered}")
+        current_pid_output = LineRegulator.regulate(Dist_filtered, setpoint)
+        
         if side == "RIGHT":
                 print("RIGHT")
                 Motor.MotorMove(BAZASPEED - current_pid_output, BAZASPEED + current_pid_output)
         elif side == "LEFT":
                 print("LEFT")
                 Motor.MotorMove(BAZASPEED + current_pid_output, BAZASPEED - current_pid_output)
+
+        
         DataTeleplot.send_telemetry("DISTANTION", Dist_filtered)
+        DataTeleplot.send_telemetry("Error", LineRegulator.regulate_error)
+        DataTeleplot.send_telemetry("PID", current_pid_output)
+        DataTeleplot.send_telemetry("I", LineRegulator.I)
+        DataTeleplot.send_telemetry("P", LineRegulator.P)
 
         if time.time() - FirstTime > Duration:
              print("Task Completed. timer is off")
