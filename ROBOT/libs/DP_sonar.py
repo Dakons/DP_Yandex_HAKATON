@@ -22,12 +22,17 @@ def get_distance():
     time.sleep(0.00001)  # Удерживаем HIGH в течение 10 мкс
     gpio.digital_write(TRIG, 0)  # Устанавливаем TRIG в низкий уровень
 
+    
     start_time = time.time()  # Время начала
     stop_time = time.time()  # Время остановки
-
+    init_time = start_time
     # Ждем, пока ECHO не станет высоким
     while gpio.digital_read(ECHO) == 0:
         start_time = time.time()
+        if (time.time() - init_time > 0.1):
+            print("NO IMPULSE")
+            SOS_FLAG  = 1
+            break
 
     # Ждем, пока ECHO не станет низким
     while gpio.digital_read(ECHO) == 1:
@@ -36,7 +41,9 @@ def get_distance():
     # Вычисляем расстояние в сантиметрах
     elapsed_time = stop_time - start_time
     distance = (elapsed_time * 34300) / 2  # Скорость звука ~34300 см/с
-
+    if SOS_FLAG ==1:
+        SOS_FLAG =0
+        distance = -1
     return distance
 
 
