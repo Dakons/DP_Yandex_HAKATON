@@ -57,6 +57,7 @@ def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
 drive_along_wall(side ="LEFT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
-#drive_along_wall("RIGHT", 10, 50, 12, -0.04, 0)
-#Motor.MotorMove(0, 0)
+drive_along_wall(side ="RIGHT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
+Motor.MotorMove(0, 0)
+time.sleep(1)
     
