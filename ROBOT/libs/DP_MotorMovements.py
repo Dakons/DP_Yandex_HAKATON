@@ -49,16 +49,28 @@ def turn (speed_normal, direction):
         Motor.MotorMove(-speed_normal, speed_normal)
 
 
-def Smooth_turn_Start(speed_normal, step):
-    for i in range(0, speed_normal+1, 1):
-        Motor.MotorMove(i,-i)
-        time.sleep(step)
-    Motor.MotorMove(speed_normal,-speed_normal)
+def Smooth_turn_Start(speed_normal, step, direction):
+    if direction == "CLOCKWISE":
+        for i in range(0, speed_normal+1, 1):
+            Motor.MotorMove(i,-i)
+            time.sleep(step)
+        Motor.MotorMove(speed_normal,-speed_normal)
+    elif direction == "COUNTERCLOCKWISE":
+        for i in range(0, speed_normal+1, 1):
+            Motor.MotorMove(-i,i)
+            time.sleep(step)
+        Motor.MotorMove(-speed_normal, speed_normal)
 
-def Smooth_turn_Stop(speed_normal, step):
-    for i in range(speed_normal, -1, -1):
-        Motor.MotorMove(i,-i)
-        time.sleep(step)
+def Smooth_turn_Stop(speed_normal, step, direction):
+    if direction == "CLOCKWISE":
+        for i in range(speed_normal, -1, -1):
+            Motor.MotorMove(i,-i)
+            time.sleep(step)
+    elif direction == "COUNTERCLOCKWISE":
+        for i in range(speed_normal, -1, -1):
+            Motor.MotorMove(-i,i)
+            time.sleep(step)
+        Motor.MotorMove(-speed_normal, speed_normal)
     Motor.MotorMove(0,0)
 
 def Smooth_line_Start(speed_normal, step):

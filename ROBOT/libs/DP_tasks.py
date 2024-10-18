@@ -93,13 +93,20 @@ def add_angle(added_angle: float):
 """
 
 def add_angle(added_angle: float):
+    direction = ""
+    if abs(added_angle)<= 180:
+        added_angle=added_angle*1.11
+    elif abs(added_angle)<=90:
+        added_angle=added_angle*0
     if (added_angle < 0):
         direction = "CLOCKWISE"
-    else:
+        added_angle = abs(added_angle * 0.003 * 3.3)
+    elif added_angle > 0:
         direction = "COUNTERCLOCKWISE"
-    added_angle = added_angle * 0.003 * 2.85
+        added_angle = abs(added_angle * 0.003 * 3.15)
+    print(added_angle)
     print("START Smooth turn start")
-    Movement.Smooth_turn_Start(BAZASPEED, 0.01)
+    Movement.Smooth_turn_Start(BAZASPEED, 0.01, direction)
     print("END Smooth turn start")
     First_time = time.time()
     while True:
@@ -107,7 +114,7 @@ def add_angle(added_angle: float):
         if time.time() - First_time > (added_angle - BAZASPEED * 0.02):
             break
     print("START Smooth turn stop")
-    Movement.Smooth_turn_Stop(BAZASPEED, 0.01)
+    Movement.Smooth_turn_Stop(BAZASPEED, 0.01, direction)
     print("END Smooth turn stop")
     Motor.MotorMove(0, 0)
 
@@ -128,9 +135,9 @@ def drive_line(Duration):
 
 
 
-add_angle(360)
-time.sleep(1)
-add_angle(-360)
+add_angle(90)
+time.sleep(5)
+add_angle(-90)
 #time.sleep(5)
 """
 drive_along_wall(side ="LEFT", Duration = 12, setpoint = 30, kp = 16, ki = -0.08, kd = 0)
