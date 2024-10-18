@@ -42,14 +42,24 @@ def sweep (speed_normal, speed_boom, duration, direction: str):
         time.sleep(duration)
         Motor.MotorMove(speed_normal, speed_normal)
 
-def turn (speed_normal, angle):
-    if angle < 0:
-        Motor.MotorMove(-speed_normal, speed_normal)
-    elif angle > 0:
+def turn (speed_normal, direction):
+    if direction == "CLOCKWISE":
         Motor.MotorMove(speed_normal, -speed_normal)
-    time.sleep(angle*0.8)
-    Motor.MotorMove(0,0)
+    elif direction > "COUNTERCLOCKWISE":
+        Motor.MotorMove(-speed_normal, speed_normal)
 
+
+def Smooth_turn_Start(speed_normal, step):
+    for i in range(0, speed_normal+1, 1):
+        Motor.MotorMove(i,-i)
+        time.sleep(step)
+    Motor.MotorMove(speed_normal,-speed_normal)
+
+def Smooth_turn_Stop(speed_normal, step):
+    for i in range(speed_normal, -1, -1):
+        Motor.MotorMove(i,-i)
+        time.sleep(step)
+    Motor.MotorMove(0,0)
 
 def Smooth_line_Start(speed_normal, step):
     for i in range(0, speed_normal+1, 1):
