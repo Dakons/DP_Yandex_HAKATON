@@ -22,7 +22,7 @@ SonarFilter = Filter(5, 0.3)
 
 sonarServo = Servo(ANGLE_MAX=180, ANGLE_MIN=0, servonum=7)
 sonarServo.set(90)
-LineRegulator = PIDRegulator(Kp=12, Ki=-0.04, Kd=0, output_min=-20, output_max=20, i_buffer_size=240)
+LineRegulator = PIDRegulator(Kp=12, Ki=-0.04, Kd=0, output_min=-20, output_max=20, i_buffer_size=200)
 time.sleep(3)
 
 def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
@@ -46,7 +46,7 @@ def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
             Dist_filtered += SONAR_OFFSET  # Если слева, отнимаем поправку
         elif side == 'RIGHT':
             Dist_filtered -= SONAR_OFFSET  # Если справа, прибавляем поправку
-            
+
         current_pid_output = LineRegulator.regulate(Dist_filtered, setpoint)
         
         if side == "RIGHT":
@@ -78,34 +78,46 @@ def add_angle(added_angle: float):
     if added_angle > 0:
         Motor.MotorMove(BAZASPEED, -BAZASPEED)
         added_angle = added_angle * 0.003
-        added_angle = added_angle * 2.7
+        added_angle = added_angle * 3.8
         print(added_angle)
         time.sleep(added_angle)
     else:
         Motor.MotorMove(-BAZASPEED, BAZASPEED)
         added_angle = -added_angle
         added_angle = added_angle * 0.003
-        added_angle = added_angle * 2.7
+        added_angle = added_angle * 3.8
         print(added_angle)
         time.sleep(added_angle)
     Motor.MotorMove(0, 0)
 
 
-drive_along_wall(side ="LEFT", Duration = 5, setpoint = 30, kp = 16, ki = -0.08, kd = 0)
+def drive_line(Duration):
+    print("START Smooth start")
+    Movement.Smooth_line_Start(BAZASPEED, 0.01)
+    print("END Smooth start")
+    First_time = time.time()
+    while True:
+        Motor.MotorMove(BAZASPEED, BAZASPEED)
+        if time.time() - First_time > (Duration - BAZASPEED * 0.02):
+             break
+    print("START Smooth stop")
+    Movement.Smooth_line_Stop(BAZASPEED, 0.01)
+    print("END Smooth stop")
+    Motor.MotorMove(0, 0)
+
+drive_along_wall(side ="LEFT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
-add_angle(-90)
 
-"""
 add_angle(180)
 Motor.MotorMove(0, 0)
 time.sleep(1)
 
-drive_along_wall(side ="RIGHT", Duration = 12, setpoint = 30, kp = 16, ki = -0.08, kd = 0)
+drive_along_wall(side ="RIGHT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
 
 add_angle(180)
 time.sleep(1)
 Motor.MotorMove(0, 0)
-"""
+    
