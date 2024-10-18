@@ -64,12 +64,31 @@ def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
     Motor.MotorMove(0, 0)
     print("Motor Stopped")
 
+def add_angle(added_angle: float):
+    if added_angle > 0:
+        Motor.MotorMove(BAZASPEED, -BAZASPEED)
+        added_angle = added_angle * 0.003
+        added_angle = added_angle * 3.8
+        print(added_angle)
+        time.sleep(added_angle)
+    else:
+        Motor.MotorMove(-BAZASPEED, BAZASPEED)
+        added_angle = -added_angle
+        added_angle = added_angle * 0.003
+        added_angle = added_angle * 3.8
+        print(added_angle)
+        time.sleep(added_angle)
+    Motor.MotorMove(0, 0)
 
 
 drive_along_wall(side ="LEFT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
+add_angle(180)
+Motor.MotorMove(0, 0)
 drive_along_wall(side ="RIGHT", Duration = 5, setpoint = 50, kp = 12, ki = -0.04, kd = 0)
 Motor.MotorMove(0, 0)
 time.sleep(1)
+add_angle(180)
+Motor.MotorMove(0, 0)
     
