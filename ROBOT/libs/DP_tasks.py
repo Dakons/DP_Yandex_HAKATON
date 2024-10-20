@@ -7,6 +7,9 @@ import time
 #import threading
 BAZASPEED = 75
 SONAR_OFFSET = -4  # Поправка в сантиметрах для датчика, установленного сбоку
+KP = 12
+KI = -0.04
+KD = 0
 # Получаем путь к директории ROBOT
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
@@ -28,9 +31,9 @@ sonarServo.set(90)
 LineRegulator = PIDRegulator(Kp=12, Ki=-0.04, Kd=0, output_min=-20, output_max=20, i_buffer_size=240)
 time.sleep(3)
 
-def drive_along_wall(side, Distantion, setpoint, kp, ki, kd):
+def drive_along_wall(side, Distantion, setpoint):
     Duration = round(((Distantion - 40)/38),2)
-    LineRegulator = PIDRegulator(Kp=kp, ki=ki, Kd=kd, output_min=-20, output_max=20, i_buffer_size=240)  
+    LineRegulator = PIDRegulator(Kp=KP, ki=KI, Kd=KD, output_min=-20, output_max=20, i_buffer_size=240)  
     if side == 'LEFT':
         sonarServo.set(180)
     elif side == 'RIGHT':
