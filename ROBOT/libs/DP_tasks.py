@@ -1,6 +1,3 @@
-
-
-
 import sys
 import os
 import time
@@ -10,6 +7,7 @@ SONAR_OFFSET = -4  # Поправка в сантиметрах для датч�
 KP = 12
 KI = -0.04
 KD = 0
+SPEEED = 38 #см в секунду
 # Получаем путь к директории ROBOT
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
@@ -32,7 +30,7 @@ LineRegulator = PIDRegulator(Kp=12, Ki=-0.04, Kd=0, output_min=-20, output_max=2
 time.sleep(3)
 
 def drive_along_wall(side, Distantion, setpoint):
-    Duration = round(((Distantion - 40)/38),2)
+    Duration = round(((Distantion - 40)/SPEEED),2)
     LineRegulator = PIDRegulator(Kp=KP, Ki=KI, Kd=KD, output_min=-20, output_max=20, i_buffer_size=240)  
     if side == 'LEFT':
         sonarServo.set(180)
@@ -91,24 +89,26 @@ def add_angle(added_angle):
     if direction == "COUNTERCLOCKWISE":
         steps -= 1
     steps -= added_angle // 90    
-    Movement.Add_bit_angle(BAZASPEED,direction,0.060,int(steps))
+    Movement.Add_bit_angle(BAZASPEED,direction,0.060,steps)
 
 def drive_line(Distantion):
-    Duration = round(((Distantion - 40)/38),2)
-    print("START Smooth start")
-    Movement.Smooth_line_Start(BAZASPEED, 0.01)
-    print("END Smooth start")
-    First_time = time.time()
+    if Distantion < 50:
+        Duration = round(Distantion/(SPEEED*0.5),2)
+    else:
+        Duration = round(((Distantion - 40)/SPEEED),2)
+        print("START Smooth start")
+        Movement.Smooth_line_Start(BAZASPEED, 0.01)
+        print("END Smooth start")
+        First_time = time.time()
     while True:
         Motor.MotorMove(BAZASPEED, BAZASPEED)
         if time.time() - First_time > (Duration - BAZASPEED * 0.02):
-             break
-    print("START Smooth stop")
-    Movement.Smooth_line_Stop(BAZASPEED, 0.01)
-    print("END Smooth stop")
+            break
+    if Distantion > 50:
+        print("START Smooth stop")
+        Movement.Smooth_line_Stop(BAZASPEED, 0.01)
+        print("END Smooth stop")
     Motor.MotorMove(0, 0)
-
-
 
 
 
