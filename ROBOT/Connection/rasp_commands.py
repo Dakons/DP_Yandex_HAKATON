@@ -13,6 +13,14 @@ import libs.DP_MotorMoveLibr as Motor  # Импортируем библиоте
 import libs.DP_servo as Servo
 import libs.DP_tasks as tasks
 import asyncio
+
+async def set_servo(angle_1, angle_2, angle_3, angle_4):
+    serv_1.set(angle_1)
+    serv_2.set(angle_2)
+    serv_3.set(angle_3)
+    serv_4.set(angle_4)
+    
+
 serv_1 = Servo.Servo(180, 0, 1)
 serv_2 = Servo.Servo(180, 0, 2)
 serv_3 = Servo.Servo(180, 0, 3)
@@ -50,62 +58,65 @@ async def do_commands(command, conn):
     match name:
         case "Motor":
             Motor.MotorMove(int(values[0]), int(values[1]))
+            print("Motor")
         case "Servo_take_cube_floor":
-            set_servo(175, 25, 90, 35)
+            await set_servo(175, 25, 90, 35)
             time.sleep(0.5)
-            set_servo(65, 180, 90, 35)
+            await set_servo(65, 180, 90, 35)
             time.sleep(0.5)
-            set_servo(65, 180, 90, 70)
+            await set_servo(65, 180, 90, 70)
             time.sleep(0.5)
-            set_servo(175, 25, 90, 70)
+            await set_servo(175, 25, 90, 70)
+            print("Servo_take_cube_floor")
         case "Servo_take_ball_floor":
-            set_servo(175, 25, 90, 35)
+            await set_servo(175, 25, 90, 35)
             time.sleep(0.5)
-            set_servo(65, 180, 90, 35)
+            await set_servo(65, 180, 90, 35)
             time.sleep(0.5)
-            set_servo(65, 180, 90, 80)
+            await set_servo(65, 180, 90, 80)
             time.sleep(0.5)
-            set_servo(175, 25, 90, 80)
+            await set_servo(175, 25, 90, 80)
+            print("Servo_take_ball_floor")
         case "Servo_put_cube_to_basket":
-            set_servo(175, 25, 90, 70)
+            await set_servo(175, 25, 90, 70)
             time.sleep(0.5)
-            set_servo(175, 90, 90, 70)
+            await set_servo(175, 90, 90, 70)
             time.sleep(0.5)
-            set_servo(175, 70, 90, 70)
+            await set_servo(175, 70, 90, 70)
             time.sleep(0.5)
-            set_servo(175, 90, 90, 70)
+            await set_servo(175, 90, 90, 70)
             time.sleep(0.5)
-            set_servo(175, 70, 90, 70)
+            await set_servo(175, 70, 90, 70)
             time.sleep(0.5)
-            set_servo(175, 25, 90, 35)
+            await set_servo(175, 25, 90, 35)
+            print("Servo_put_cube_to_basket")
         case "Servo_put_ball_to_basket":
-            set_servo(175, 25, 90, 80)
+            await set_servo(175, 25, 90, 80)
             time.sleep(0.5)
-            set_servo(175, 90, 90, 80)
+            await set_servo(175, 90, 90, 80)
             time.sleep(0.5)
-            set_servo(175, 70, 90, 80)
+            await set_servo(175, 70, 90, 80)
             time.sleep(0.5)
-            set_servo(175, 90, 90, 80)
+            await set_servo(175, 90, 90, 80)
             time.sleep(0.5)
-            set_servo(175, 70, 90, 80)
+            await set_servo(175, 70, 90, 80)
             time.sleep(0.5)
-            set_servo(175, 25, 90, 35)
+            await set_servo(175, 25, 90, 35)
+            print("Servo_put_ball_to_basket")
 
         case "Camera":
             serv_7.set(int(values[0]))
             serv_8.set(int(values[1]))
 
-        case "Go_Straight":
+        case "Go_Straight_Wall":
             side = values[0]
-            Duration = float(values[1])
+            Distantion = float(values[1])
             setpoint = float(values[2])
-            tasks.drive_along_wall(side, Duration, setpoint, ki, kp, kd)
+            tasks.drive_along_wall(side, Distantion, setpoint)
         case "Turn":
-            added_angle = float(values[0])
+            added_angle = int(values[0])
             tasks.add_angle(added_angle)
+        case "Go_Straight":
+            Distantion = float(values[0])
+            tasks.drive_line(Distantion)
 
-async def set_servo(angle_1, angle_2, angle_3, angle_4):
-    serv_1.set(angle_1)
-    serv_2.set(angle_2)
-    serv_3.set(angle_3)
-    serv_4.set(angle_4)

@@ -33,7 +33,7 @@ time.sleep(3)
 
 def drive_along_wall(side, Distantion, setpoint):
     Duration = round(((Distantion - 40)/38),2)
-    LineRegulator = PIDRegulator(Kp=KP, ki=KI, Kd=KD, output_min=-20, output_max=20, i_buffer_size=240)  
+    LineRegulator = PIDRegulator(Kp=KP, Ki=KI, Kd=KD, output_min=-20, output_max=20, i_buffer_size=240)  
     if side == 'LEFT':
         sonarServo.set(180)
     elif side == 'RIGHT':
@@ -91,7 +91,7 @@ def add_angle(added_angle):
     if direction == "COUNTERCLOCKWISE":
         steps -= 1
     steps -= added_angle // 90    
-    Movement.Add_bit_angle(BAZASPEED,direction,0.060,steps)
+    Movement.Add_bit_angle(BAZASPEED,direction,0.060,int(steps))
 
 def drive_line(Distantion):
     Duration = round(((Distantion - 40)/38),2)
@@ -107,6 +107,10 @@ def drive_line(Distantion):
     Movement.Smooth_line_Stop(BAZASPEED, 0.01)
     print("END Smooth stop")
     Motor.MotorMove(0, 0)
+
+
+
+
 
 
 """
