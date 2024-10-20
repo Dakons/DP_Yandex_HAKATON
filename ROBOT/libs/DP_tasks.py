@@ -121,12 +121,16 @@ def add_angle(added_angle: float):
 def add_angle(added_angle):
     if (added_angle < 0):
         direction = "CLOCKWISE"
-        added_angle = abs(added_angle * 0.003 * 3.3)
+        added_angle = abs(added_angle)
     elif added_angle > 0:
         direction = "COUNTERCLOCKWISE"
-        added_angle = abs(added_angle * 0.003 * 3.15)
     steps = added_angle//5
-    Movement.Add_bit_angle(BAZASPEED,direction,0.1,steps)
+    if direction == "COUNTERCLOCKWISE":
+        steps -= 1
+    steps -= added_angle // 90    
+    
+    
+    Movement.Add_bit_angle(BAZASPEED,direction,0.045,steps)
 
 def drive_line(Duration):
     print("START Smooth start")
@@ -144,9 +148,13 @@ def drive_line(Duration):
 
 
 
-add_angle(90)
-time.sleep(5)
-add_angle(-90)
+#add_angle(360)
+Movement.Add_bit_angle(BAZASPEED,"COUNTERCLOCKWISE",0.060,72)
+time.sleep(1)
+#Movement.Add_bit_angle(BAZASPEED,"CLOCKWISE",0.060,72)
+#time.sleep(1)
+#Movement.Add_bit_angle(BAZASPEED,"CLOCKWISE",0.060,1)
+#add_angle(-360)
 #time.sleep(5)
 """
 drive_along_wall(side ="LEFT", Duration = 12, setpoint = 30, kp = 16, ki = -0.08, kd = 0)

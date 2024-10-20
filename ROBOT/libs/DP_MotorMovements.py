@@ -90,7 +90,11 @@ def Add_bit_angle(speed_normal, direction, steptime, stepcount):
         if direction == "CLOCKWISE":   
             Motor.MotorMove(speed_normal,-speed_normal)
             time.sleep(steptime)
+            Motor.MotorMove(0,0)
+            time.sleep(0.025)
         elif direction == "COUNTERCLOCKWISE":
             Motor.MotorMove(-speed_normal,speed_normal)
             time.sleep(steptime)
+            Motor.MotorMove(0,0)
+            time.sleep(0.025)
     Motor.MotorMove(0,0)
