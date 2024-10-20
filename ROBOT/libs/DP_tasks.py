@@ -25,8 +25,9 @@ sonarServo.set(90)
 LineRegulator = PIDRegulator(Kp=12, Ki=-0.04, Kd=0, output_min=-20, output_max=20, i_buffer_size=240)
 time.sleep(3)
 
-def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
-    
+def drive_along_wall(side, Distantion, setpoint, kp, ki, kd):
+    Duration = round(((Distantion - 40)/38),2)
+    LineRegulator = PIDRegulator(Kp=kp, ki=ki, Kd=kd, output_min=-20, output_max=20, i_buffer_size=240)  
     if side == 'LEFT':
         sonarServo.set(180)
     elif side == 'RIGHT':
@@ -74,50 +75,6 @@ def drive_along_wall(side, Duration, setpoint, kp, ki, kd):
     Motor.MotorMove(0, 0)
     print("Motor Stopped")
 
-"""
-def add_angle(added_angle: float):
-    if added_angle > 0:
-        Motor.MotorMove(BAZASPEED, -BAZASPEED)
-        added_angle = added_angle * 0.003
-        added_angle = added_angle * 3.8
-        print(added_angle)
-        time.sleep(added_angle)
-    else:
-        Motor.MotorMove(-BAZASPEED, BAZASPEED)
-        added_angle = -added_angle
-        added_angle = added_angle * 0.003
-        added_angle = added_angle * 3.8
-        print(added_angle)
-        time.sleep(added_angle)
-    Motor.MotorMove(0, 0)
-"""
-"""
-def add_angle(added_angle: float):
-    direction = ""
-    if abs(added_angle)<= 180:
-        added_angle=added_angle*1.11
-    elif abs(added_angle)<=90:
-        added_angle=added_angle*0
-    if (added_angle < 0):
-        direction = "CLOCKWISE"
-        added_angle = abs(added_angle * 0.003 * 3.3)
-    elif added_angle > 0:
-        direction = "COUNTERCLOCKWISE"
-        added_angle = abs(added_angle * 0.003 * 3.15)
-    print(added_angle)
-    print("START Smooth turn start")
-    Movement.Smooth_turn_Start(BAZASPEED, 0.01, direction)
-    print("END Smooth turn start")
-    First_time = time.time()
-    while True:
-        Movement.turn(BAZASPEED, direction)
-        if time.time() - First_time > (added_angle - BAZASPEED * 0.02):
-            break
-    print("START Smooth turn stop")
-    Movement.Smooth_turn_Stop(BAZASPEED, 0.01, direction)
-    print("END Smooth turn stop")
-    Motor.MotorMove(0, 0)
-"""
 def add_angle(added_angle):
     if (added_angle < 0):
         direction = "CLOCKWISE"
@@ -128,11 +85,10 @@ def add_angle(added_angle):
     if direction == "COUNTERCLOCKWISE":
         steps -= 1
     steps -= added_angle // 90    
-    
-    
-    Movement.Add_bit_angle(BAZASPEED,direction,0.045,steps)
+    Movement.Add_bit_angle(BAZASPEED,direction,0.060,steps)
 
-def drive_line(Duration):
+def drive_line(Distantion):
+    Duration = round(((Distantion - 40)/38),2)
     print("START Smooth start")
     Movement.Smooth_line_Start(BAZASPEED, 0.01)
     print("END Smooth start")
@@ -148,9 +104,20 @@ def drive_line(Duration):
 
 
 
+time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
+Movement.Smooth_line_Start(BAZASPEED,0.01)
+Motor.MotorMove(BAZASPEED,BAZASPEED)
+time.sleep(5)
+Movement.Smooth_line_Stop(BAZASPEED,0.01)
+Motor.MotorMove(0,0)
+time.sleep(3)
+
+
 #add_angle(360)
-Movement.Add_bit_angle(BAZASPEED,"COUNTERCLOCKWISE",0.060,72)
-time.sleep(1)
+#Movement.Add_bit_angle(BAZASPEED,"COUNTERCLOCKWISE",0.060,72)
+#time.sleep(1)
+
+
 #Movement.Add_bit_angle(BAZASPEED,"CLOCKWISE",0.060,72)
 #time.sleep(1)
 #Movement.Add_bit_angle(BAZASPEED,"CLOCKWISE",0.060,1)
