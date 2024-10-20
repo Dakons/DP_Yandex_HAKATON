@@ -106,7 +106,7 @@ def drive_line(Distantion):
     Motor.MotorMove(0, 0)
 
 
-
+"""
 time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
 Movement.Smooth_line_Start(BAZASPEED,0.01)
 Motor.MotorMove(BAZASPEED,BAZASPEED)
@@ -115,7 +115,7 @@ Movement.Smooth_line_Stop(BAZASPEED,0.01)
 Motor.MotorMove(0,0)
 time.sleep(3)
 
-
+"""
 #add_angle(360)
 #Movement.Add_bit_angle(BAZASPEED,"COUNTERCLOCKWISE",0.060,72)
 #time.sleep(1)
