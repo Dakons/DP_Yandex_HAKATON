@@ -128,9 +128,7 @@ def add_angle(added_angle):
     if direction == "COUNTERCLOCKWISE":
         steps -= 1
     steps -= added_angle // 90    
-    
-    
-    Movement.Add_bit_angle(BAZASPEED,direction,0.045,steps)
+    Movement.Add_bit_angle(BAZASPEED,direction,0.060,steps)
 
 def drive_line(Duration):
     print("START Smooth start")
@@ -147,10 +145,25 @@ def drive_line(Duration):
     Motor.MotorMove(0, 0)
 
 
+time.sleep(3)#замеряем расстояние
+Movement.Smooth_line_Stop(BAZASPEED,0.01)
+Motor.MotorMove(0,0)
+time.sleep(3)
+
+"""
+time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
+Movement.Smooth_line_Stop(BAZASPEED,0.01)
+Motor.MotorMove(BAZASPEED,BAZASPEED)
+time.sleep(5)
+Motor.MotorMove(0,0)
+"""
+
 
 #add_angle(360)
-Movement.Add_bit_angle(BAZASPEED,"COUNTERCLOCKWISE",0.060,72)
-time.sleep(1)
+#Movement.Add_bit_angle(BAZASPEED,"COUNTERCLOCKWISE",0.060,72)
+#time.sleep(1)
+
+
 #Movement.Add_bit_angle(BAZASPEED,"CLOCKWISE",0.060,72)
 #time.sleep(1)
 #Movement.Add_bit_angle(BAZASPEED,"CLOCKWISE",0.060,1)
