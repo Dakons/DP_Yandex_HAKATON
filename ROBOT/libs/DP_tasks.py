@@ -144,19 +144,20 @@ def drive_line(Duration):
     print("END Smooth stop")
     Motor.MotorMove(0, 0)
 
-
+"""
 time.sleep(3)#замеряем расстояние
 Movement.Smooth_line_Stop(BAZASPEED,0.01)
 Motor.MotorMove(0,0)
 time.sleep(3)
-
 """
+
 time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
-Movement.Smooth_line_Stop(BAZASPEED,0.01)
+Movement.Smooth_line_Start(BAZASPEED,0.01)
 Motor.MotorMove(BAZASPEED,BAZASPEED)
 time.sleep(5)
+Movement.Smooth_line_Stop(BAZASPEED,0.01)
 Motor.MotorMove(0,0)
-"""
+time.sleep(3)
 
 
 #add_angle(360)
