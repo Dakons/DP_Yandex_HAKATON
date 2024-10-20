@@ -92,8 +92,8 @@ async def do_commands(command, conn):
             set_servo(175, 25, 90, 35)
 
         case "Camera":
-            serv_7.set(int(values[1]))
-            serv_8.set(int(values[2]))
+            serv_7.set(int(values[0]))
+            serv_8.set(int(values[1]))
 
         case "Go_Straight":
             side = values[0]
