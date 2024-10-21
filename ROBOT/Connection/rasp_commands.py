@@ -141,14 +141,12 @@ async def do_commands(command, conn):
             time.sleep(0.5)
             tasks.drive_line(-13)
             await set_servo(175, 25, 90, 80)
-            print("Servo_push_button"):
-            await set_servo(175, 25, 90, 45)
+        case "Servo_push_button":
+            await set_servo(175, 25, 90, 80)
             time.sleep(0.5)
-            await set_servo(175, 90, 90, 45)
+            await set_servo(175, 90, 90, 80)
             time.sleep(0.5)
             tasks.drive_line(13)
-            await set_servo(175, 55, 90, 45)
-            time.sleep(0.5)
             await set_servo(175, 55, 90, 80)
             time.sleep(0.5)
             await set_servo(175, 90, 90, 80)
