@@ -35,11 +35,11 @@ async def do_commands(command, conn):
         case "Motor":
             Motor.MotorMove(int(values[0]), int(values[1]))
             print("Motor")
-            await asyncio.to_thread(conn.sendall('Motor_Done'.encode()))
+
         case "Color":
             led.set_all_leds(values[0])
             print("LED")
-            await asyncio.to_thread(conn.sendall('Color_Done'.encode()))
+            
         case "Servo_take_cube_floor":
             await set_servo(175, 25, 90, 35)
             time.sleep(0.5)
@@ -51,7 +51,7 @@ async def do_commands(command, conn):
             time.sleep(0.5)
             await set_servo(175, 25, 90, 70)
             print("Servo_take_cube_floor")
-            await asyncio.to_thread(conn.sendall('Servo_take_cube_floor_Done'.encode()))
+
         case "Servo_take_ball_floor":
             await set_servo(175, 25, 90, 35)
             time.sleep(0.5)
@@ -63,7 +63,7 @@ async def do_commands(command, conn):
             time.sleep(0.5)
             await set_servo(175, 25, 90, 80)
             print("Servo_take_ball_floor")
-            await asyncio.to_thread(conn.sendall("Servo_take_ball_floor_Done".encode()))
+
         case "Servo_put_cube_to_basket":
             await set_servo(175, 25, 90, 70)
             time.sleep(0.5)
@@ -77,7 +77,7 @@ async def do_commands(command, conn):
             tasks.drive_line(-10)
             await set_servo(175, 25, 90, 35)
             print("Servo_put_cube_to_basket")
-            await asyncio.to_thread(conn.sendall("Servo_put_cube_to_basket_Done".encode()))
+
         case "Servo_put_ball_to_basket":
             await set_servo(175, 25, 90, 80)
             time.sleep(0.5)
@@ -91,7 +91,6 @@ async def do_commands(command, conn):
             tasks.drive_line(-10)
             await set_servo(175, 25, 90, 35)
             print("Servo_put_ball_to_basket")
-            await asyncio.to_thread(conn.sendall("Servo_put_ball_to_basket_Done".encode()))
 
         case "Servo_take_cube_from_basket":
             await set_servo(175, 25, 90, 45)
@@ -108,7 +107,7 @@ async def do_commands(command, conn):
             tasks.drive_line(-13)
             await set_servo(175, 25, 90, 70)
             print("Servo_take_cube_from_basket")
-            await asyncio.to_thread(conn.sendall("Servo_take_cube_from_basket_Done".encode()))
+
             
         case "Servo_take_ball_from_basket":
             await set_servo(175, 25, 90, 45)
@@ -124,7 +123,7 @@ async def do_commands(command, conn):
             time.sleep(0.5)
             tasks.drive_line(-13)
             await set_servo(175, 25, 90, 80)
-            await asyncio.to_thread(conn.sendall("Servo_take_ball_from_basket_Done".encode()))
+
         case "Servo_push_button":
             await set_servo(175, 25, 90, 80)
             time.sleep(0.5)
@@ -138,21 +137,22 @@ async def do_commands(command, conn):
             tasks.drive_line(-13)
             await set_servo(175, 25, 90, 80)
             print("Servo_push_button")
-            await asyncio.to_thread(conn.sendall("Servo_push_button_Done".encode()))
+
             
         case "Go_Straight_Wall":
             side = values[0]
             Distantion = float(values[1])
             setpoint = float(values[2])
             tasks.drive_along_wall(side, Distantion, setpoint)
-            await asyncio.to_thread(conn.sendall("Go_Straight_Wall_Done".encode()))
+
 
         case "Turn":
             added_angle = int(values[0])
             tasks.add_angle(added_angle)
-            await asyncio.to_thread(conn.sendall("Turn_Done".encode()))
+
         case "Go_Straight":
             Distantion = float(values[0])
             tasks.drive_line(Distantion)
-            await asyncio.to_thread(conn.sendall("Go_Straight_Done".encode()))
+    await asyncio.to_thread(conn.sendall, "Done".encode())
+            
 

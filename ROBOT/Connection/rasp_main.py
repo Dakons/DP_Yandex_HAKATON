@@ -32,7 +32,7 @@ class TCPServer:
 
                 command = data.decode().strip()  # Декодируем и убираем пробелы/переводы строк
                 await commands.do_commands(command, conn)
-                # Асинхронно передаём команду и соединение в библиотеку команд
+
 
             except ConnectionResetError:
                 print(f"Соединение с клиентом {addr} потеряно.")
