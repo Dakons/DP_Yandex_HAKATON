@@ -96,13 +96,16 @@ def drive_line(Distantion):
         Duration = round(Distantion/(SPEEED*0.5),2)
     else:
         Duration = round(((Distantion - 40)/SPEEED),2)
+        print (Duration)
         print("START Smooth start")
         Movement.Smooth_line_Start(BAZASPEED, 0.01)
         print("END Smooth start")
         First_time = time.time()
     while True:
         Motor.MotorMove(BAZASPEED, BAZASPEED)
-        if time.time() - First_time > (Duration - BAZASPEED * 0.02):
+        if (time.time()-First_time)  > (Duration):
+            print(time.time()-First_time)
+            #print(time.time())
             break
     if Distantion > 50:
         print("START Smooth stop")
@@ -112,6 +115,11 @@ def drive_line(Distantion):
 
 
 
+time.sleep(3)
+
+drive_line(100)
+
+time.sleep(3)
 
 """
 time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
