@@ -22,6 +22,10 @@ def set_all_leds(color):
     :param color: цвет светодиодов (1-8, предопределённые значения)
     """
     # Устанавливаем цвет для всех 8 светодиодов в указанной группе
-    sendbuf = [0xff, 0x06, colors[color], 0x00, 0xff]
+    if color == "GREEN":
+        sendbuf = [0xff, 0x06, 0x02, 0x00, 0xff]
+    if color == "RED":
+        sendbuf = [0xff, 0x06, 0x01, 0x00, 0xff]
     i2c.writedata(i2c.mcu_address, sendbuf)
     time.sleep(0.01)
+    print("Color set: {color}")
