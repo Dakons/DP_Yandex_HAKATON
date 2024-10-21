@@ -85,17 +85,13 @@ def add_angle(added_angle):
         added_angle = abs(added_angle)
     elif added_angle > 0:
         direction = "COUNTERCLOCKWISE"
-    steps = added_angle//5
-    if direction == "COUNTERCLOCKWISE":
-        steps -= 1
-    steps -= added_angle // 90    
+    steps = added_angle//5  
     Movement.Add_bit_angle(BAZASPEED,direction,0.060,steps)
 
 def drive_line(Distantion):
     USESPEED = BAZASPEED
     FLAG_BACK = 0
     if Distantion < 0:
-        Distantion = abs(Distantion)
         FLAG_BACK = 1
         USESPEED = -BAZASPEED
     if abs(Distantion) < 50:
@@ -105,7 +101,7 @@ def drive_line(Distantion):
         Duration = round(((Distantion - 40)/SPEEED),2)
         print (Duration)
         print("START Smooth start")
-        Movement.Smooth_line_Start(BAZASPEED, 0.01)
+        Movement.Smooth_line_Start(USESPEED, 0.01)
         print("END Smooth start")
         First_time = time.time()
     while True:
