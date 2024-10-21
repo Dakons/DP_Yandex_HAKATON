@@ -26,7 +26,7 @@ SonarFilter = Filter(5, 0.3)
 
 sonarServo = Servo(ANGLE_MAX=180, ANGLE_MIN=0, servonum=7)
 sonarServo.set(90)
-LineRegulator = PIDRegulator(Kp=12, Ki=-0.04, Kd=0, output_min=-20, output_max=20, i_buffer_size=240)
+LineRegulator = PIDRegulator(Kp=KP, Ki=KI, Kd=KD, output_min=-20, output_max=20, i_buffer_size=240)
 time.sleep(3)
 
 def drive_along_wall(side, Distantion, setpoint):
@@ -53,21 +53,21 @@ def drive_along_wall(side, Distantion, setpoint):
             Dist_filtered -= SONAR_OFFSET  # Если справа, прибавляем поправку
 
         if Dist_filtered <= 10:
-            LineRegulator.Kp = LineRegulator.Kp * 2 
+            LineRegulator.Ki = 0
         else:
-            LineRegulator.Kp = KP
+            LineRegulator.Ki = KI
         
         current_pid_output = LineRegulator.regulate(Dist_filtered, setpoint)
         
         if side == "RIGHT":
                 
                 Motor.MotorMove(BAZASPEED - current_pid_output, BAZASPEED + current_pid_output)
-                print("RIGHT")
+                print(f"RIGHT{Dist_filtered},{LineRegulator.I}")
         elif side == "LEFT":
                 
                 Motor.MotorMove(BAZASPEED + current_pid_output, BAZASPEED - current_pid_output)
-                print("LEFT")
-
+                print(f"LEFT{Dist_filtered},{LineRegulator.I}")
+        """
         print("Start send data")
         DataTeleplot.send_telemetry("DISTANTION", Dist_filtered)
         DataTeleplot.send_telemetry("Error", LineRegulator.regulate_error)
@@ -75,6 +75,7 @@ def drive_along_wall(side, Distantion, setpoint):
         DataTeleplot.send_telemetry("I", LineRegulator.I)
         DataTeleplot.send_telemetry("P", LineRegulator.P)
         print("End send data")
+        """
         if time.time() - FirstTime > Duration:
              print("Task Completed. timer is off")
              break
@@ -116,7 +117,7 @@ def drive_line(Distantion):
             print(time.time()-First_time)
             #print(time.time())
             break
-    if Distantion > 50:
+    if Distantion >= 50:
         print("START Smooth stop")
         Movement.Smooth_line_Stop(BAZASPEED, 0.01)
         print("END Smooth stop")
@@ -129,8 +130,8 @@ def drive_line(Distantion):
 #drive_line(-10)
 
 #Movement.Smooth_line_Start(BAZASPEED,0.01)
-
-drive_along_wall(side ="LEFT", Distantion = 100, setpoint = 30)
-add_angle(180)
-drive_along_wall(side ="RIGHT", Distantion = 100, setpoint = 30)
-add_angle(180)
+#drive_line(200)
+#drive_along_wall(side ="LEFT", Distantion = 150, setpoint = 30)
+#add_angle(-180)
+#drive_along_wall(side ="RIGHT", Distantion = 100, setpoint = 60)
+#add_angle(180)
