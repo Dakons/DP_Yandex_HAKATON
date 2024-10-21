@@ -90,11 +90,10 @@ def add_angle(added_angle):
 
 def drive_line(Distantion):
     USESPEED = BAZASPEED
-    FLAG_BACK = 0
     if Distantion < 0:
-        USESPEED = -BAZASPEED
+        USESPEED = -USESPEED
     if abs(Distantion) < 50:
-        Duration = round(Distantion/(SPEEED*0.5),2)
+        Duration = round(abs(Distantion)/(SPEEED*0.5),2)
         First_time = time.time()
     else:
         Duration = round(((Distantion - 40)/SPEEED),2)
@@ -107,21 +106,22 @@ def drive_line(Distantion):
         if Distantion < 50:
             Motor.MotorMove(USESPEED/2, USESPEED/2)
         else:
-            Motor.MotorMove(USESPEED, USESPEED)
+            Motor.MotorMove(BAZASPEED, BAZASPEED)
         if (time.time()-First_time)  > (Duration):
             print(time.time()-First_time)
             #print(time.time())
             break
     if Distantion > 50:
         print("START Smooth stop")
-        Movement.Smooth_line_Stop(USESPEED, 0.01)
+        Movement.Smooth_line_Stop(BAZASPEED, 0.01)
         print("END Smooth stop")
     Motor.MotorMove(0, 0)
 
-
-
-drive_line(10)
-drive_line(-10)
+#NA 1\4 proyeszhayet > 25 vmesto 20
+for i in range(1):
+    drive_line(10)
+    time.sleep(1)
+#drive_line(-10)
 """
 time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
 Movement.Smooth_line_Start(BAZASPEED,0.01)
