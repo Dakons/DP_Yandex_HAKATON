@@ -12,6 +12,7 @@ sys.path.append(parent_dir)
 import libs.DP_MotorMoveLibr as Motor  # Импортируем библиотеку для управления моторами
 import libs.DP_servo as Servo
 import libs.DP_tasks as tasks
+import libs.DP_LED as led
 import asyncio
 
 async def set_servo(angle_1, angle_2, angle_3, angle_4):
@@ -59,6 +60,9 @@ async def do_commands(command, conn):
         case "Motor":
             Motor.MotorMove(int(values[0]), int(values[1]))
             print("Motor")
+        case "Color":
+            led.set_all_leds(values[0])
+            print("LED")
         case "Servo_take_cube_floor":
             await set_servo(175, 25, 90, 35)
             time.sleep(0.5)

@@ -3,11 +3,13 @@ from DP_i2c import I2c
 
 i2c = I2c()
 
+colors = {"GREEN": "2", "RED": 3}
+
 class CarLight:
     def __init__(self):
         pass
 
-    def set_all_leds(self, group, color):
+    def set_all_leds(self, color):
         """
         Устанавливает один и тот же цвет для всех светодиодов в группе.
         
@@ -16,7 +18,7 @@ class CarLight:
         """
         if 0 < group < 3 and 0 < color < 9:
             # Устанавливаем цвет для всех 8 светодиодов в указанной группе
-            sendbuf = [0xff, group + 1, 8, color, 0xff]
+            sendbuf = [0xff, 3, 8, colors[color], 0xff]
             i2c.writedata(i2c.mcu_address, sendbuf)
             time.sleep(0.01)
 
