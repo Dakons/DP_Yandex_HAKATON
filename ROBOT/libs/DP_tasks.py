@@ -95,6 +95,7 @@ def drive_line(Distantion):
     USESPEED = BAZASPEED
     FLAG_BACK = 0
     if Distantion < 0:
+        Distantion = abs(Distantion)
         FLAG_BACK = 1
         USESPEED = -BAZASPEED
     if abs(Distantion) < 50:
