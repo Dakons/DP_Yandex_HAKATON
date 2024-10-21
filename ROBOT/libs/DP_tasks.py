@@ -92,8 +92,10 @@ def add_angle(added_angle):
     Movement.Add_bit_angle(BAZASPEED,direction,0.060,steps)
 
 def drive_line(Distantion):
+    
     if Distantion < 50:
         Duration = round(Distantion/(SPEEED*0.5),2)
+        First_time = time.time()
     else:
         Duration = round(((Distantion - 40)/SPEEED),2)
         print (Duration)
@@ -102,7 +104,10 @@ def drive_line(Distantion):
         print("END Smooth start")
         First_time = time.time()
     while True:
-        Motor.MotorMove(BAZASPEED, BAZASPEED)
+        if Distantion < 50:
+            Motor.MotorMove(BAZASPEED/2, BAZASPEED/2)
+        else:
+            Motor.MotorMove(BAZASPEED, BAZASPEED)
         if (time.time()-First_time)  > (Duration):
             print(time.time()-First_time)
             #print(time.time())
@@ -117,7 +122,7 @@ def drive_line(Distantion):
 
 time.sleep(3)
 
-drive_line(100)
+drive_line(60)
 
 time.sleep(3)
 
