@@ -144,16 +144,16 @@ async def do_commands(command, conn):
         case "Servo_push_button":
             await set_servo(175, 25, 90, 80)
             time.sleep(0.5)
-            await set_servo(175, 90, 90, 80)
+            await set_servo(175,160, 0, 80)
             time.sleep(0.5)
             tasks.drive_line(13)
-            await set_servo(175, 55, 90, 80)
+            await set_servo(175, 45, 0, 80)
             time.sleep(0.5)
             await set_servo(175, 90, 90, 80)
             time.sleep(0.5)
             tasks.drive_line(-13)
             await set_servo(175, 25, 90, 80)
-            print("Servo_take_ball_from_basket")
+            print("Servo_push_button")
             
         case "Go_Straight_Wall":
             side = values[0]
