@@ -92,7 +92,6 @@ def drive_line(Distantion):
     USESPEED = BAZASPEED
     FLAG_BACK = 0
     if Distantion < 0:
-        FLAG_BACK = 1
         USESPEED = -BAZASPEED
     if abs(Distantion) < 50:
         Duration = round(Distantion/(SPEEED*0.5),2)
@@ -115,14 +114,14 @@ def drive_line(Distantion):
             break
     if Distantion > 50:
         print("START Smooth stop")
-        Movement.Smooth_line_Stop(BAZASPEED, 0.01)
+        Movement.Smooth_line_Stop(USESPEED, 0.01)
         print("END Smooth stop")
     Motor.MotorMove(0, 0)
 
 
 
-
-
+drive_line(10)
+drive_line(-10)
 """
 time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
 Movement.Smooth_line_Start(BAZASPEED,0.01)
