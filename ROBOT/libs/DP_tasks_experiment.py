@@ -123,56 +123,14 @@ def drive_line(Distantion):
     Motor.MotorMove(0, 0)
 
 #NA 1\4 proyeszhayet > 25 vmesto 20
-for i in range(1):
-    drive_line(10)
-    time.sleep(1)
+#for i in range(1):
+ #   drive_line(10)
+  #  time.sleep(1)
 #drive_line(-10)
-"""
-time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
-Movement.Smooth_line_Start(BAZASPEED,0.01)
-Motor.MotorMove(BAZASPEED,BAZASPEED)
-time.sleep(5)
-Movement.Smooth_line_Stop(BAZASPEED,0.01)
-Motor.MotorMove(0,0)
-time.sleep(3)
 
-"""
-#add_angle(360)
-#Movement.Add_bit_angle(BAZASPEED,"COUNTERCLOCKWISE",0.060,72)
-#time.sleep(1)
+#Movement.Smooth_line_Start(BAZASPEED,0.01)
 
-
-#Movement.Add_bit_angle(BAZASPEED,"CLOCKWISE",0.060,72)
-#time.sleep(1)
-#Movement.Add_bit_angle(BAZASPEED,"CLOCKWISE",0.060,1)
-#add_angle(-360)
-#time.sleep(5)
-"""
-drive_along_wall(side ="LEFT", Duration = 12, setpoint = 30, kp = 16, ki = -0.08, kd = 0)
-Motor.MotorMove(0, 0)
-time.sleep(1)
-add_angle(220)
-time.sleep(1)
-drive_along_wall(side ="RIGHT", Duration = 12, setpoint = 30, kp = 16, ki = -0.08, kd = 0)
-Motor.MotorMove(0, 0)
-"""
-
-
-'''
-drive_along_wall(side ="LEFT", Duration = 5, setpoint = 30, kp = 16, ki = -0.08, kd = 0)
-Motor.MotorMove(0, 0)
-time.sleep(1)
-
-
-add_angle(-90)
-time.sleep(1)
-drive_line(2)
-time.sleep(1)
-
-drive_along_wall(side ="LEFT", Duration = 5, setpoint = 30, kp = 16, ki = -0.08, kd = 0)
-Motor.MotorMove(0, 0)
-time.sleep(1)
-
-Motor.MotorMove(0, 0)
-time.sleep(1)
-'''
+drive_along_wall(side ="LEFT", Distantion = 100, setpoint = 30)
+add_angle(180)
+drive_along_wall(side ="RIGHT", Distantion = 100, setpoint = 30)
+add_angle(180)
