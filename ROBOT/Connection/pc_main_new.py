@@ -28,8 +28,11 @@ class TCPClient:
             print(f"Ответ от сервера: {response}")
 
 
+
+'''Пример использования
+from pc_main_new import TCPClient
+
 raspberry = TCPClient("192.168.185.206")
 
 raspberry.send_command("Turn 360")
-
-
+'''
