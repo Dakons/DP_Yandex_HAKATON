@@ -92,8 +92,8 @@ def add_angle(added_angle):
     Movement.Add_bit_angle(BAZASPEED,direction,0.060,steps)
 
 def drive_line(Distantion):
-    
-    if Distantion < 50:
+    if 
+    if abs(Distantion) < 50:
         Duration = round(Distantion/(SPEEED*0.5),2)
         First_time = time.time()
     else:
@@ -120,11 +120,7 @@ def drive_line(Distantion):
 
 
 
-time.sleep(3)
 
-drive_line(60)
-
-time.sleep(3)
 
 """
 time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
