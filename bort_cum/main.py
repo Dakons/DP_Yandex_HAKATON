@@ -1,5 +1,6 @@
 import config  # Подключаем файл с конфигурацией
 import bort_cam  # Импортируем библиотеку bort_cam для дальнейшей работы
+import test_cam  # Импортируем библиотеку test_cam для калибровки
 import cv2  # Для работы с камерой
 
 camera = None  # Глобальная переменная для хранения объекта камеры
@@ -31,7 +32,6 @@ def process_command():
         # Считывание команды с терминала и деление на части по пробелам
         parts = input("Enter the command: ").split()
 
-        # Проверяем команду bort_cam и её параметры
         if len(parts) > 0 and parts[0] == "bort_cam":
             object_class = parts[1] if len(parts) > 1 else None
 
@@ -39,9 +39,16 @@ def process_command():
             if object_class in config.CLASSES:
                 config.selected_class = object_class
                 message_command(f"Class '{object_class}' selected.")
-                bort_cam.capture_image(camera)  # Передаём объект камеры в функцию захвата изображения
+                bort_cam.capture_image(camera)  # Захватываем изображение с камеры
             else:
                 message_command(f"Error: Invalid or missing class '{object_class}'.")
+        
+        elif len(parts) > 0 and parts[0] == "test_cam":
+            object_class = parts[1] if len(parts) > 1 else None
+            config.selected_class = object_class
+            # Запускаем калибровку через команду test_cam
+            test_cam.calibrate(camera)  # Вызываем функцию калибровки
+        
         else:
             message_command(f"Unknown command: {parts[0]}")
 

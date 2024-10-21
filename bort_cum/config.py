@@ -19,3 +19,4 @@ CIRCLE_PARAMS = {
     'buttons': {'center_x': 320, 'center_y': 240, 'radius': 60},
     'cube': {'center_x': 320, 'center_y': 240, 'radius': 50},
 }
+
