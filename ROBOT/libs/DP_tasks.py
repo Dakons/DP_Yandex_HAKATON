@@ -1,6 +1,7 @@
 import sys
 import os
 import time
+
 #import threading
 BAZASPEED = 75
 SONAR_OFFSET = -4  # Поправка в сантиметрах для датчика, установленного сбоку
@@ -11,7 +12,7 @@ SPEEED = 38 #см в секунду
 # Получаем путь к директории ROBOT
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
-
+import libs.DP_LED as led
 from libs.DP_Regulator import PIDRegulator
 from libs.DP_Filter import Filter
 import libs.DP_sonar as Ultrasonic
@@ -20,7 +21,7 @@ from libs.DP_teleplot import TelemetrySender
 from libs.DP_servo import Servo
 import libs.DP_MotorMovements as Movement
 
-
+led.set_all_leds("RED")
 DataTeleplot = TelemetrySender()
 SonarFilter = Filter(5, 0.3)
 
@@ -117,11 +118,7 @@ def drive_line(Distantion):
         print("END Smooth stop")
     Motor.MotorMove(0, 0)
 
-#NA 1\4 proyeszhayet > 25 vmesto 20
-for i in range(1):
-    drive_line(10)
-    time.sleep(1)
-#drive_line(-10)
+
 """
 time.sleep(3)#замеряем расстояние для вперёд,вычитая прошлое
 Movement.Smooth_line_Start(BAZASPEED,0.01)
